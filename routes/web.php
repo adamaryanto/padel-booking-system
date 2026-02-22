@@ -8,10 +8,12 @@ Route::get('/api/availability', [\App\Http\Controllers\CustomerBookingController
 Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransController::class, 'handleNotification'])->name('midtrans.callback');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\CustomerBookingController::class, 'dashboard'])->name('dashboard');
+    Route::get('/my-bookings', [\App\Http\Controllers\CustomerBookingController::class, 'dashboard'])->name('dashboard');
     
     Route::get('/courts/{court}', [\App\Http\Controllers\CustomerBookingController::class, 'show'])->name('customer.courts.show');
     Route::post('/bookings', [\App\Http\Controllers\CustomerBookingController::class, 'store'])->name('customer.bookings.store');
+    
+    Route::get('/payment/finish', [\App\Http\Controllers\CustomerBookingController::class, 'paymentFinish'])->name('payment.finish');
     
     Route::get('/bookings/{booking}/payment', [\App\Http\Controllers\CustomerBookingController::class, 'payment'])->name('customer.payments.create');
     Route::post('/bookings/{booking}/payment', [\App\Http\Controllers\CustomerBookingController::class, 'storePayment'])->name('customer.payments.store');
@@ -36,6 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/bookings/{booking}/receipt', [\App\Http\Controllers\CustomerBookingController::class, 'downloadReceipt'])->name('bookings.receipt');
 });
 
 require __DIR__.'/auth.php';

@@ -5,106 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Padel | @yield('title', 'Dashboard')</title>
 
-    <!-- Vite Styles -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 antialiased font-sans">
-    
-    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-        <div class="px-3 py-3 lg:px-5 lg:pl-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center justify-start rtl:justify-end">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-                        <span class="sr-only">Open sidebar</span>
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                    <a href="{{ route('admin.dashboard') }}" class="flex ms-2 md:me-24">
-                        <i data-lucide="trophy" class="w-8 h-8 me-3 text-primary-500"></i>
-                        <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap dark:text-white uppercase tracking-tighter">Padel<span class="text-primary-500">Booking</span></span>
-                    </a>
-                </div>
-                <div class="flex items-center">
-                    <div class="flex items-center ms-3">
-                        <div>
-                            <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                                <span class="sr-only">Open user menu</span>
-                                <div class="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold">
-                                    {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
-                                </div>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+        <i class="fas fa-trophy fa-3x text-primary animate-bounce"></i>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light border-bottom-0 shadow-sm">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            </li>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown user-menu">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                    <span class="d-none d-md-inline mr-2 text-dark font-weight-bold">{{ Auth::user()->name }}</span>
+                    <div class="img-circle bg-primary d-inline-flex align-items-center justify-content-center text-white font-weight-bold shadow-sm" style="width: 32px; height: 32px;">
+                        {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                    </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right shadow border-0">
+                    <!-- User image -->
+                    <li class="user-header bg-primary">
+                        <div class="img-circle bg-white d-inline-flex align-items-center justify-content-center text-primary font-weight-bold shadow-sm mb-2" style="width: 60px; height: 60px; font-size: 24px;">
+                            {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                        </div>
+                        <p>
+                            {{ Auth::user()->name }}
+                            <small>Administrator</small>
+                        </p>
+                    </li>
+                    <!-- Menu Footer-->
+                    <li class="user-footer">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-default btn-flat float-right text-danger font-weight-bold rounded">
+                                <i class="fas fa-sign-out-alt mr-1"></i> Logout
                             </button>
-                        </div>
-                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">
-                            <div class="px-4 py-3" role="none">
-                                <p class="text-sm text-gray-900 dark:text-white" role="none">
-                                    {{ Auth::user()->name }}
-                                </p>
-                                <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                                    {{ Auth::user()->email }}
-                                </p>
-                            </div>
-                            <ul class="py-1" role="none">
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem">Sign out</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="{{ route('admin.dashboard') }}" class="brand-link border-bottom-0 shadow-sm">
+            <span class="brand-image img-circle elevation-3 d-flex align-items-center justify-content-center bg-primary text-white font-weight-bold" style="width: 33px; height: 33px; opacity: .8">
+                <i class="fas fa-trophy text-sm"></i>
+            </span>
+            <span class="brand-text font-weight-bold">PADEL <span class="text-primary">ADMIN</span></span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Menu -->
+            <nav class="mt-4">
+                <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+                    <li class="nav-header text-uppercase small opacity-50 font-weight-bold mb-2">Main Menu</li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active shadow' : '' }}">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header text-uppercase small opacity-50 font-weight-bold mt-4 mb-2">Management</li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.courts.index') }}" class="nav-link {{ request()->routeIs('admin.courts.*') ? 'active shadow' : '' }}">
+                            <i class="nav-icon fas fa-table"></i>
+                            <p>Lapangan</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.bookings.index') }}" class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active shadow' : '' }}">
+                            <i class="nav-icon fas fa-calendar-check"></i>
+                            <p>Booking & Pembayaran</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-header text-uppercase small opacity-50 font-weight-bold mt-4 mb-2">Settings</li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('admin.landing.edit') }}" class="nav-link {{ request()->routeIs('admin.landing.*') ? 'active shadow' : '' }}">
+                            <i class="nav-icon fas fa-tools"></i>
+                            <p>Landing Page</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper bg-light">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 font-weight-bold text-dark">@yield('header')</h1>
                     </div>
                 </div>
             </div>
         </div>
-    </nav>
+        <!-- /.content-header -->
 
-    <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
-        <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-            <ul class="space-y-2 font-medium">
-                <li>
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-50 dark:hover:bg-gray-700 group {{ request()->routeIs('admin.dashboard') ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-500' : '' }}">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 transition duration-75 {{ request()->routeIs('admin.dashboard') ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white' }}"></i>
-                        <span class="ms-3">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.courts.index') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-50 dark:hover:bg-gray-700 group {{ request()->routeIs('admin.courts.*') ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-500' : '' }}">
-                        <i data-lucide="layout-grid" class="w-5 h-5 transition duration-75 {{ request()->routeIs('admin.courts.*') ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white' }}"></i>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Manajemen Lapangan</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.bookings.index') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-50 dark:hover:bg-gray-700 group {{ request()->routeIs('admin.bookings.*') ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-500' : '' }}">
-                        <i data-lucide="calendar" class="w-5 h-5 transition duration-75 {{ request()->routeIs('admin.bookings.*') ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white' }}"></i>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Booking & Pembayaran</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.landing.edit') }}" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-primary-50 dark:hover:bg-gray-700 group {{ request()->routeIs('admin.landing.*') ? 'bg-primary-50 text-primary-600 dark:bg-gray-700 dark:text-primary-500' : '' }}">
-                        <i data-lucide="monitor" class="w-5 h-5 transition duration-75 {{ request()->routeIs('admin.landing.*') ? 'text-primary-600 dark:text-primary-500' : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white' }}"></i>
-                        <span class="flex-1 ms-3 whitespace-nowrap">Landing Page</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </aside>
-
-    <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-dashed rounded-lg border-gray-200 dark:border-gray-700 mt-14 min-h-screen">
-            <header class="mb-6">
-                <h1 class="text-2xl font-extrabold text-gray-900 dark:text-white">@yield('header')</h1>
-            </header>
-            
-            @yield('content')
-        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                @yield('content')
+            </div>
+        </section>
+        <!-- /.content -->
     </div>
+    <!-- /.content-wrapper -->
 
-    <!-- Scripts -->
-    <script>
-        lucide.createIcons();
-    </script>
-    @stack('scripts')
+    <footer class="main-footer border-0 shadow-sm text-sm">
+        <strong>Copyright &copy; 2026 <a href="#">Padel Booking</a>.</strong>
+        All rights reserved.
+        <div class="float-right d-none d-sm-inline-block">
+            <b>Version</b> 1.0.0
+        </div>
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+@stack('scripts')
 </body>
 </html>
+

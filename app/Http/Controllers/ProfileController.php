@@ -16,8 +16,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $landingContent = \App\Models\LandingPageContent::first() ?? new \App\Models\LandingPageContent();
         return view('profile.edit', [
             'user' => $request->user(),
+            'landingContent' => $landingContent,
         ]);
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Midtrans\Config;
 use Midtrans\Snap;
+use Midtrans\Transaction;
 use Carbon\Carbon;
 
 class CustomerBookingController extends Controller
@@ -31,7 +32,8 @@ class CustomerBookingController extends Controller
 
     public function show(Court $court)
     {
-        return view('customer.courts.show', compact('court'));
+        $landingContent = \App\Models\LandingPageContent::first() ?? new \App\Models\LandingPageContent();
+        return view('customer.courts.show', compact('court', 'landingContent'));
     }
 
     public function store(Request $request)
@@ -99,14 +101,37 @@ class CustomerBookingController extends Controller
                 'first_name' => Auth::user()->name,
                 'email' => Auth::user()->email,
             ],
+            'callbacks' => [
+                'finish' => route('payment.finish'),
+                'unfinish' => route('payment.finish'),
+                'error' => route('payment.finish'),
+            ]
         ];
 
         try {
             $snapToken = Snap::getSnapToken($params);
             $payment->update(['snap_token' => $snapToken]);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'snap_token' => $snapToken,
+                    'booking_id' => $booking->id,
+                    'message' => 'Booking berhasil dibuat. Silakan selesaikan pembayaran.'
+                ]);
+            }
+
             return redirect()->route('dashboard', ['pay' => $snapToken])->with('success', 'Booking berhasil dibuat. Silakan selesaikan pembayaran.');
         } catch (\Exception $e) {
             \Log::error("Midtrans Snap Error on Store: " . $e->getMessage());
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghasilkan token pembayaran otomatis, silakan coba lagi atau cek dashboard.'
+                ], 500);
+            }
+
             return redirect()->route('dashboard')->with('success', 'Booking berhasil dibuat. Gagal menghasilkan token pembayaran otomatis, silakan bayar melalui dashboard.');
         }
     }
@@ -120,44 +145,79 @@ class CustomerBookingController extends Controller
 
         // Ensure snap tokens for pending bookings
         foreach ($bookings as $booking) {
-            if ($booking->status === 'pending' && (!$booking->payment || !$booking->payment->snap_token)) {
-                $payment = Payment::firstOrCreate(
-                    ['booking_id' => $booking->id],
-                    [
-                        'status' => 'pending',
-                        'gross_amount' => $booking->total_price,
-                    ]
-                );
-
-                if (!$payment->snap_token) {
-                    Config::$serverKey = config('midtrans.server_key');
-                    Config::$isProduction = config('midtrans.is_production');
-                    Config::$isSanitized = config('midtrans.is_sanitized');
-                    Config::$is3ds = config('midtrans.is_3ds');
-
-                    $params = [
-                        'transaction_details' => [
-                            'order_id' => 'BOOKING-' . $booking->id,
-                            'gross_amount' => (int) $booking->total_price,
-                        ],
-                        'customer_details' => [
-                            'first_name' => Auth::user()->name,
-                            'email' => Auth::user()->email,
-                        ],
-                    ];
-
+            if ($booking->status === 'pending' || $booking->status === 'unpaid') {
+                if ($booking->payment && $booking->payment->snap_token) {
+                    // Try to update status from Midtrans if pending (Status Pull)
                     try {
-                        $snapToken = Snap::getSnapToken($params);
-                        $payment->update(['snap_token' => $snapToken]);
+                        Config::$serverKey = config('midtrans.server_key');
+                        Config::$isProduction = config('midtrans.is_production');
+                        
+                        $status = Transaction::status('BOOKING-' . $booking->id);
+                        $transaction = $status->transaction_status;
+                        $type = $status->payment_type;
+                        $fraud = $status->fraud_status;
+
+                        if ($transaction == 'capture' || $transaction == 'settlement') {
+                            $booking->update(['status' => 'approved']);
+                            $booking->payment->update([
+                                'status' => 'verified',
+                                'transaction_id' => $status->transaction_id,
+                                'payment_type' => $type,
+                                'gross_amount' => $status->gross_amount,
+                            ]);
+                        } elseif ($transaction == 'expire' || $transaction == 'cancel' || $transaction == 'deny') {
+                            $booking->payment->update(['status' => $transaction]);
+                        }
                     } catch (\Exception $e) {
-                        // Log or handle error quietly for dashboard
-                        \Log::error("Midtrans Snap Error on Dashboard: " . $e->getMessage());
+                        // Order ID not found yet in Midtrans or other error, skip quietly
+                    }
+                }
+
+                // If still pending and no token, generate one
+                if (!$booking->payment || !$booking->payment->snap_token) {
+                    $payment = Payment::firstOrCreate(
+                        ['booking_id' => $booking->id],
+                        [
+                            'status' => 'pending',
+                            'gross_amount' => $booking->total_price,
+                        ]
+                    );
+
+                    if (!$payment->snap_token) {
+                        Config::$serverKey = config('midtrans.server_key');
+                        Config::$isProduction = config('midtrans.is_production');
+                        Config::$isSanitized = config('midtrans.is_sanitized');
+                        Config::$is3ds = config('midtrans.is_3ds');
+
+                        $params = [
+                            'transaction_details' => [
+                                'order_id' => 'BOOKING-' . $booking->id,
+                                'gross_amount' => (int) $booking->total_price,
+                            ],
+                            'customer_details' => [
+                                'first_name' => Auth::user()->name,
+                                'email' => Auth::user()->email,
+                            ],
+                            'callbacks' => [
+                                'finish' => route('payment.finish'),
+                                'unfinish' => route('payment.finish'),
+                                'error' => route('payment.finish'),
+                            ]
+                        ];
+
+                        try {
+                            $snapToken = Snap::getSnapToken($params);
+                            $payment->update(['snap_token' => $snapToken]);
+                        } catch (\Exception $e) {
+                            \Log::error("Midtrans Snap Error on Dashboard: " . $e->getMessage());
+                        }
                     }
                 }
             }
         }
 
-        return view('dashboard', compact('bookings'));
+        $landingContent = \App\Models\LandingPageContent::first() ?? new \App\Models\LandingPageContent();
+        return view('dashboard', compact('bookings', 'landingContent'));
     }
 
     public function payment(Booking $booking)
@@ -197,6 +257,11 @@ class CustomerBookingController extends Controller
                         'name' => "Booking Lapangan: " . $booking->court->name,
                     ]
                 ],
+                'callbacks' => [
+                    'finish' => route('payment.finish'),
+                    'unfinish' => route('payment.finish'),
+                    'error' => route('payment.finish'),
+                ]
             ];
 
             try {
@@ -207,7 +272,13 @@ class CustomerBookingController extends Controller
             }
         }
 
-        return view('customer.payments.create', compact('booking', 'payment'));
+        $landingContent = \App\Models\LandingPageContent::first() ?? new \App\Models\LandingPageContent();
+        return view('customer.payments.create', compact('booking', 'payment', 'landingContent'));
+    }
+
+    public function paymentFinish()
+    {
+        return redirect()->route('dashboard');
     }
 
     public function storePayment(Request $request, Booking $booking)
@@ -267,5 +338,18 @@ class CustomerBookingController extends Controller
         }
 
         return response()->json($slots);
+    }
+
+    public function downloadReceipt(Booking $booking)
+    {
+        if ($booking->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $booking->load(['court', 'user', 'payment']);
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('customer.bookings.receipt', compact('booking'));
+        
+        return $pdf->download('Receipt-Booking-' . $booking->id . '.pdf');
     }
 }

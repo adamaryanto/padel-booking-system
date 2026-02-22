@@ -1,100 +1,133 @@
-@extends('layouts.customer')
+@extends('layouts.public')
 
-@section('title', 'Riwayat Booking')
-@section('header', 'Riwayat Booking Saya')
+@section('title', 'My Bookings')
 
 @section('content')
-<div class="bg-white overflow-hidden shadow-sm sm:rounded-xl border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-    <div class="p-6 text-gray-900 dark:text-gray-100">
+<div class="py-24 px-4 sm:px-6 lg:px-8 bg-dark min-h-screen">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div class="max-w-xl text-center md:text-left transition-all duration-700">
+                <h2 class="text-neon font-black uppercase tracking-[.3em] text-xs mb-4">Activity History</h2>
+                <h3 class="text-4xl font-black text-white italic tracking-tighter uppercase font-heading">YOUR <span class="underline decoration-neon underline-offset-8">RESERVATIONS</span></h3>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('welcome') }}#courts" class="bg-neon text-dark px-6 py-3 rounded-xl font-black uppercase tracking-tighter hover:bg-white transition shadow-lg text-sm">
+                    New Booking
+                </a>
+            </div>
+        </div>
+
         @if(session('success'))
-            <div class="bg-green-50 text-green-700 p-4 rounded-xl mb-6 flex items-center dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-800">
-                <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+            <div class="mb-8 bg-neon/10 border border-neon/20 text-neon px-6 py-4 rounded-2xl font-bold flex items-center shadow-lg animate-bounce">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-4 font-bold">#</th>
-                        <th scope="col" class="px-6 py-4 font-bold">Lapangan</th>
-                        <th scope="col" class="px-6 py-4 font-bold">Jadwal</th>
-                        <th scope="col" class="px-6 py-4 font-bold">Total Harga</th>
-                        <th scope="col" class="px-6 py-4 font-bold text-center">Status</th>
-                        <th scope="col" class="px-6 py-4 font-bold text-center">Pembayaran</th>
-                        <th scope="col" class="px-6 py-4 font-bold text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @forelse($bookings as $booking)
-                    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">{{ $booking->court->name }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                            <div class="flex flex-col">
-                                <span class="font-semibold text-gray-900 dark:text-white">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</span>
-                                <span class="text-xs text-gray-500">{{ substr($booking->start_time, 0, 5) }} - {{ substr($booking->end_time, 0, 5) }} WIB</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-sm font-black text-indigo-600 dark:text-indigo-400">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
-                        <td class="px-6 py-4 text-center">
-                            @if($booking->status == 'pending')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-tighter bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-500 border border-yellow-200 dark:border-yellow-800">
+        <div class="bg-dark-card rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl relative">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-white/5 text-neon font-black uppercase text-xs tracking-[0.2em]">
+                            <th class="px-8 py-6">Arena</th>
+                            <th class="px-8 py-6">Schedule</th>
+                            <th class="px-8 py-6">Total Price</th>
+                            <th class="px-8 py-6 text-center">Status</th>
+                            <th class="px-8 py-6 text-center">Payment</th>
+                            <th class="px-8 py-6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        @forelse($bookings as $booking)
+                        <tr class="hover:bg-white/[0.02] transition duration-300">
+                            <td class="px-8 py-6 font-black text-white italic tracking-tighter uppercase text-xl">
+                                {{ $booking->court->name }}
+                            </td>
+                            <td class="px-8 py-6">
+                                <div class="flex flex-col">
+                                    <span class="text-white font-bold">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</span>
+                                    <span class="text-gray-500 text-xs font-black uppercase tracking-widest mt-1">
+                                        {{ substr($booking->start_time, 0, 5) }} - {{ substr($booking->end_time, 0, 5) }} WIB
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-6 font-black text-neon text-lg italic uppercase">
+                                Rp {{ number_format($booking->total_price, 0, ',', '.') }}
+                            </td>
+                            <td class="px-8 py-6 text-center">
+                                @php
+                                    $statusClasses = [
+                                        'pending' => 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+                                        'approved' => 'bg-neon/10 text-neon border-neon/20',
+                                        'cancelled' => 'bg-red-500/10 text-red-500 border-red-500/20',
+                                    ];
+                                    $statusClass = $statusClasses[$booking->status] ?? 'bg-white/5 text-white/50 border-white/10';
+                                @endphp
+                                <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $statusClass }}">
                                     {{ $booking->status }}
                                 </span>
-                            @elseif($booking->status == 'approved')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-tighter bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-500 border border-green-200 dark:border-green-800">
-                                    {{ $booking->status }}
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-tighter bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-500 border border-red-200 dark:border-red-800">
-                                    {{ $booking->status }}
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            @if($booking->payment)
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-tighter
-                                    @if($booking->payment->status == 'verified') bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-500 border border-green-200 dark:border-green-800
-                                    @elseif($booking->payment->status == 'rejected') bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-500 border border-red-200 dark:border-red-800
-                                    @elseif($booking->payment->status == 'pending' && $booking->payment->snap_token) bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-500 border border-blue-200 dark:border-blue-800
-                                    @else bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-600 @endif">
-                                    {{ $booking->payment->status == 'pending' ? 'Belum Bayar' : $booking->payment->status }}
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-tighter bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-600">Terbuka</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end space-x-2">
-                                @if($booking->status == 'pending')
-                                    @if($booking->payment && $booking->payment->snap_token)
-                                        <button onclick="payBooking('{{ $booking->payment->snap_token }}')" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-bold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:scale-95 transition shadow-lg shadow-indigo-100 dark:shadow-none">
-                                            <i data-lucide="credit-card" class="w-4 h-4 mr-1.5"></i>
-                                            Bayar
-                                        </button>
-                                    @endif
-                                    <a href="{{ route('customer.payments.create', $booking) }}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 underline underline-offset-4 decoration-dotted">Detail</a>
+                            </td>
+                            <td class="px-8 py-6 text-center">
+                                @if($booking->payment)
+                                    @php
+                                        $payStatus = $booking->payment->status;
+                                        $payClasses = [
+                                            'verified' => 'bg-neon/10 text-neon border-neon/20',
+                                            'rejected' => 'bg-red-500/10 text-red-500 border-red-500/20',
+                                            'pending' => 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+                                        ];
+                                        $payClass = $payClasses[$payStatus] ?? 'bg-white/5 text-white/50 border-white/10';
+                                    @endphp
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border {{ $payClass }}">
+                                        {{ $payStatus == 'pending' ? 'Unpaid' : $payStatus }}
+                                    </span>
                                 @else
-                                    <span class="text-xs font-bold text-gray-400 italic">Selesai</span>
+                                    <span class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border bg-white/5 text-white/30 border-white/10">
+                                        N/A
+                                    </span>
                                 @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="py-20 text-center">
-                            <div class="flex flex-col items-center">
-                                <i data-lucide="calendar-x" class="w-16 h-16 text-gray-200 dark:text-gray-700 mb-4"></i>
-                                <p class="text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest text-xs">Anda belum memiliki riwayat booking.</p>
-                                <a href="{{ route('welcome') }}" class="mt-4 bg-indigo-50 text-indigo-700 px-6 py-2 rounded-xl font-black uppercase tracking-tighter hover:bg-indigo-100 transition dark:bg-indigo-900/30 dark:text-indigo-400 dark:hover:bg-indigo-900/50">Cari Lapangan</a>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <div class="flex justify-end space-x-2">
+                                    @if($booking->status == 'pending')
+                                        @if($booking->payment && $booking->payment->snap_token)
+                                            <button onclick="payBooking('{{ $booking->payment->snap_token }}')" class="bg-neon text-dark px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-white transition shadow-lg">
+                                                Pay Now
+                                            </button>
+                                        @endif
+                                        <a href="{{ route('customer.payments.create', $booking) }}" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest transition border border-white/10" title="Booking Detail">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    @else
+                                        <div class="flex items-center space-x-2">
+                                            @if($booking->status == 'approved' && $booking->payment && $booking->payment->status == 'verified')
+                                                <a href="{{ route('bookings.receipt', $booking) }}" class="bg-neon/10 hover:bg-neon text-neon hover:text-dark px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-widest transition border border-neon/20 flex items-center space-x-2" title="Download Receipt">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                    <span>Download Receipt</span>
+                                                </a>
+                                            @endif
+                                            <span class="text-white/20 font-black uppercase text-[10px] tracking-widest italic py-2 px-4 border border-white/5 rounded-xl">
+                                                {{ $booking->status == 'cancelled' ? 'CANCELLED' : 'COMPLETED' }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-8 py-24 text-center">
+                                <div class="flex flex-col items-center opacity-30">
+                                    <i class="fas fa-calendar-times text-6xl mb-6"></i>
+                                    <p class="font-black text-white italic text-2xl uppercase tracking-tighter">No Arenas Secured Yet</p>
+                                    <a href="{{ route('welcome') }}#courts" class="mt-8 bg-neon text-dark px-8 py-4 rounded-2xl font-black uppercase tracking-tighter hover:bg-white transition shadow-2xl">Start Scanning</a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -126,11 +159,6 @@
             const payToken = urlParams.get('pay');
             if (payToken) {
                 payBooking(payToken);
-            }
-            
-            // Re-initialize Lucide in case
-            if(window.lucide) {
-                lucide.createIcons();
             }
         };
     </script>

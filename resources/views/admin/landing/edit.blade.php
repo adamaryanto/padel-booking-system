@@ -4,148 +4,178 @@
 @section('header', 'Pengaturan Landing Page')
 
 @section('content')
-<div class="space-y-6">
-    @if(session('success'))
-        <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 border border-green-200 dark:border-green-800" role="alert">
-            <i data-lucide="check-circle" class="flex-shrink-0 w-4 h-4"></i>
-            <span class="sr-only">Success</span>
-            <div class="ms-3 text-sm font-medium">
+<div class="row">
+    <div class="col-12">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible shadow-sm border-0">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-check"></i> Berhasil!</h5>
                 {{ session('success') }}
             </div>
-            <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-green-50 text-green-500 rounded-lg focus:ring-2 focus:ring-green-400 p-1.5 hover:bg-green-200 flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-success" aria-label="Close">
-                <span class="sr-only">Close</span>
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-    @endif
+        @endif
 
-    @if($errors->any())
-        <div id="alert-error" class="flex p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
-            <i data-lucide="alert-circle" class="flex-shrink-0 w-4 h-4 mt-0.5"></i>
-            <span class="sr-only">Error</span>
-            <div class="ms-3 text-sm font-medium">
-                <p class="font-bold mb-1">Terjadi kesalahan:</p>
-                <ul class="list-disc list-inside">
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible shadow-sm border-0">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h5><i class="icon fas fa-ban"></i> Terjadi Kesalahan!</h5>
+                <ul class="mb-0 mt-1 small">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-            <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-red-50 text-red-500 rounded-lg focus:ring-2 focus:ring-red-400 p-1.5 hover:bg-red-200 flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-error" aria-label="Close">
-                <span class="sr-only">Close</span>
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-    @endif
+        @endif
 
-    <form action="{{ route('admin.landing.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-        @csrf
-        @method('PUT')
+        <form action="{{ route('admin.landing.update') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-        <!-- Hero Section -->
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-                <i data-lucide="image" class="w-5 h-5 text-primary-500 me-2"></i>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Hero Section</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <div>
-                        <label for="hero_title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hero Title</label>
-                        <input type="text" name="hero_title" id="hero_title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 @error('hero_title') border-red-500 @enderror" value="{{ old('hero_title', $content->hero_title) }}" required>
-                        @error('hero_title') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label for="hero_subtitle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hero Subtitle</label>
-                        <input type="text" name="hero_subtitle" id="hero_subtitle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 @error('hero_subtitle') border-red-500 @enderror" value="{{ old('hero_subtitle', $content->hero_subtitle) }}">
-                    </div>
-                    <div>
-                        <label for="hero_cta_text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">CTA Button Text</label>
-                        <input type="text" name="hero_cta_text" id="hero_cta_text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 @error('hero_cta_text') border-red-500 @enderror" value="{{ old('hero_cta_text', $content->hero_cta_text) }}">
+            <!-- Hero Section -->
+            <div class="card card-outline card-primary shadow-sm border-0 mb-4">
+                <div class="card-header border-0 mt-2">
+                    <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
+                        <i class="fas fa-rocket mr-2 text-primary"></i>Hero Section (Bagian Atas)
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group mb-3">
+                                <label for="hero_title" class="text-dark font-weight-bold">Hero Title</label>
+                                <input type="text" name="hero_title" id="hero_title" class="form-control border-0 bg-light rounded shadow-none @error('hero_title') is-invalid @enderror" value="{{ old('hero_title', $content->hero_title) }}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="hero_subtitle" class="text-dark font-weight-bold">Hero Subtitle</label>
+                                <input type="text" name="hero_subtitle" id="hero_subtitle" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('hero_subtitle', $content->hero_subtitle) }}">
+                            </div>
+                            <div class="form-group mb-0">
+                                <label for="hero_cta_text" class="text-dark font-weight-bold">CTA Button Text</label>
+                                <input type="text" name="hero_cta_text" id="hero_cta_text" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('hero_cta_text', $content->hero_cta_text) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-4 mt-md-0">
+                            <label class="text-dark font-weight-bold d-block">Hero Illustration / Image</label>
+                            <div class="p-3 bg-light rounded-lg border-2 border-dashed d-flex flex-column align-items-center justify-content-center text-center">
+                                @if($content->hero_image)
+                                <div class="mb-3">
+                                    <img src="{{ str_starts_with($content->hero_image, 'http') ? $content->hero_image : asset('storage/'.$content->hero_image) }}" alt="Hero Preview" class="img-fluid rounded shadow-sm border" style="max-height: 120px;">
+                                </div>
+                                @endif
+                                <div class="custom-file" style="max-width: 250px;">
+                                    <input type="file" name="hero_image" class="custom-file-input" id="hero_image">
+                                    <label class="custom-file-label border-0 text-left rounded shadow-sm" for="hero_image">Ganti file...</label>
+                                </div>
+                                <small class="text-muted mt-2">SVG, PNG, JPG (Max. 2MB)</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="hero_image">Hero Image</label>
-                    <input name="hero_image" id="hero_image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" type="file">
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">SVG, PNG, JPG or WebP (Max. 2MB).</p>
-                    
-                    @if($content->hero_image)
-                    <div class="mt-4 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-                        <p class="text-xs font-medium text-gray-500 mb-2 uppercase tracking-tight">Preview Sekarang:</p>
-                        <img src="{{ str_starts_with($content->hero_image, 'http') ? $content->hero_image : asset('storage/'.$content->hero_image) }}" alt="Hero Preview" class="rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 max-h-48 object-cover">
-                    </div>
-                    @endif
-                </div>
             </div>
-        </div>
 
-        <!-- About Section -->
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-                <i data-lucide="info" class="w-5 h-5 text-primary-500 me-2"></i>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">About Section (Fasilitas)</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-4">
-                    <div>
-                        <label for="about_title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">About Title</label>
-                        <input type="text" name="about_title" id="about_title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('about_title', $content->about_title) }}" required>
-                    </div>
-                    <div>
-                        <label for="about_subtitle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">About Subtitle</label>
-                        <input type="text" name="about_subtitle" id="about_subtitle" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('about_subtitle', $content->about_subtitle) }}">
-                    </div>
-                    <div>
-                        <label for="about_description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">About Description</label>
-                        <textarea name="about_description" id="about_description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>{{ old('about_description', $content->about_description) }}</textarea>
+            <!-- About Section -->
+            <div class="card card-outline card-success shadow-sm border-0 mb-4">
+                <div class="card-header border-0 mt-2">
+                    <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
+                        <i class="fas fa-leaf mr-2 text-success"></i>About Section (Fasilitas)
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group mb-3">
+                                <label for="about_title" class="text-dark font-weight-bold">About Title</label>
+                                <input type="text" name="about_title" id="about_title" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('about_title', $content->about_title) }}" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="about_subtitle" class="text-dark font-weight-bold">About Subtitle</label>
+                                <input type="text" name="about_subtitle" id="about_subtitle" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('about_subtitle', $content->about_subtitle) }}">
+                            </div>
+                            <div class="form-group mb-0">
+                                <label for="about_description" class="text-dark font-weight-bold">About Description</label>
+                                <textarea name="about_description" id="about_description" rows="5" class="form-control border-0 bg-light rounded shadow-none" required>{{ old('about_description', $content->about_description) }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-5 mt-4 mt-md-0">
+                            <label class="text-dark font-weight-bold d-block">About Image</label>
+                            <div class="p-3 bg-light rounded-lg border-2 border-dashed d-flex flex-column align-items-center justify-content-center text-center">
+                                @if($content->about_image)
+                                <div class="mb-3">
+                                    <img src="{{ str_starts_with($content->about_image, 'http') ? $content->about_image : asset('storage/'.$content->about_image) }}" alt="About Preview" class="img-fluid rounded shadow-sm border" style="max-height: 120px;">
+                                </div>
+                                @endif
+                                <div class="custom-file" style="max-width: 250px;">
+                                    <input type="file" name="about_image" class="custom-file-input" id="about_image">
+                                    <label class="custom-file-label border-0 text-left rounded shadow-sm" for="about_image">Ganti file...</label>
+                                </div>
+                                <small class="text-muted mt-2">Recommended: 16:9 Aspect Ratio</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="about_image">About Image</label>
-                    <input name="about_image" id="about_image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" type="file">
-                    
-                    @if($content->about_image)
-                    <div class="mt-4 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
-                        <p class="text-xs font-medium text-gray-500 mb-2 uppercase tracking-tight">Preview Sekarang:</p>
-                        <img src="{{ str_starts_with($content->about_image, 'http') ? $content->about_image : asset('storage/'.$content->about_image) }}" alt="About Preview" class="rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 max-h-48 object-cover">
-                    </div>
-                    @endif
-                </div>
             </div>
-        </div>
 
-        <!-- Contact Section -->
-        <div class="p-4 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <div class="flex items-center mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-                <i data-lucide="phone" class="w-5 h-5 text-primary-500 me-2"></i>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Contact Information</h3>
+            <!-- Contact Section -->
+            <div class="card card-outline card-warning shadow-sm border-0 mb-5">
+                <div class="card-header border-0 mt-2">
+                    <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
+                        <i class="fas fa-headset mr-2 text-warning"></i>Informasi Kontak & Footer
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="contact_phone" class="text-dark font-weight-bold">Phone Number</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-phone text-muted"></i></span></div>
+                                    <input type="text" name="contact_phone" id="contact_phone" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_phone', $content->contact_phone) }}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="contact_email" class="text-dark font-weight-bold">Email Address</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-envelope text-muted"></i></span></div>
+                                    <input type="email" name="contact_email" id="contact_email" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_email', $content->contact_email) }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="whatsapp_number" class="text-dark font-weight-bold">WhatsApp Number</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fab fa-whatsapp text-muted"></i></span></div>
+                                    <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('whatsapp_number', $content->whatsapp_number) }}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="contact_address" class="text-dark font-weight-bold">Physical Address</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-map-marker-alt text-muted"></i></span></div>
+                                    <input type="text" name="contact_address" id="contact_address" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_address', $content->contact_address) }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label for="contact_phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Phone</label>
-                    <input type="text" name="contact_phone" id="contact_phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('contact_phone', $content->contact_phone) }}">
-                </div>
-                <div>
-                    <label for="contact_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                    <input type="email" name="contact_email" id="contact_email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('contact_email', $content->contact_email) }}">
-                </div>
-                <div>
-                    <label for="whatsapp_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">WhatsApp</label>
-                    <input type="text" name="whatsapp_number" id="whatsapp_number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('whatsapp_number', $content->whatsapp_number) }}">
-                </div>
-                <div>
-                    <label for="contact_address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Address</label>
-                    <input type="text" name="contact_address" id="contact_address" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white" value="{{ old('contact_address', $content->contact_address) }}">
-                </div>
-            </div>
-        </div>
 
-        <div class="flex items-center justify-end pt-4">
-            <button type="submit" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 dark:focus:ring-primary-800 inline-flex items-center shadow-lg shadow-primary-500/30 uppercase tracking-widest">
-                <i data-lucide="save" class="w-4 h-4 me-2"></i>
-                Update Landing Page
-            </button>
-        </div>
-    </form>
+            <div class="sticky-top py-3 text-right" style="bottom: 20px; z-index: 1020;">
+                <button type="submit" class="btn btn-primary btn-lg shadow-lg px-5 rounded-pill font-weight-bold text-uppercase small tracking-widest">
+                    <i class="fas fa-save mr-2"></i> Update Landing Page
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+    });
+</script>
+@endpush

@@ -1,72 +1,113 @@
 @extends('layouts.admin')
 
 @section('title', 'Edit Lapangan')
-@section('header', 'Edit Lapangan')
+@section('header', 'Edit Detail Lapangan')
 
 @section('content')
-<div class="max-w-2xl p-6 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
-    <div class="flex items-center mb-6 pb-4 border-b border-gray-100 dark:border-gray-700">
-        <i data-lucide="edit" class="w-5 h-5 text-primary-500 me-2"></i>
-        <h3 class="text-lg font-bold text-gray-900 dark:text-white">Formulir Edit Lapangan</h3>
-    </div>
-    
-    <form action="{{ route('admin.courts.update', $court) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-        @csrf
-        @method('PUT')
-        
-        <div>
-            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Lapangan</label>
-            <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('name') border-red-500 @enderror" value="{{ old('name', $court->name) }}" required>
-            @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
-
-        <div>
-            <label for="price_per_hour" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Harga Per Jam (Rp)</label>
-            <div class="relative">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                    <span class="text-gray-500 text-sm font-bold">Rp</span>
-                </div>
-                <input type="number" name="price_per_hour" id="price_per_hour" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white @error('price_per_hour') border-red-500 @enderror" value="{{ old('price_per_hour', $court->price_per_hour) }}" required>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card card-outline card-info shadow-sm border-0">
+            <div class="card-header border-0 mt-2">
+                <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
+                    <i class="fas fa-edit mr-2 text-info"></i>Formulir Perubahan Lapangan
+                </h3>
             </div>
-            @error('price_per_hour') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
+            <div class="card-body">
+                <form action="{{ route('admin.courts.update', $court) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="form-group mb-4">
+                        <label for="name" class="text-dark font-weight-bold">Nama Lapangan</label>
+                        <input type="text" name="name" id="name" class="form-control form-control-lg border-0 bg-light rounded shadow-none @error('name') is-invalid @enderror" value="{{ old('name', $court->name) }}" required>
+                        @error('name')
+                            <div class="invalid-feedback font-weight-bold">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-        <div>
-            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi</label>
-            <textarea name="description" id="description" rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">{{ old('description', $court->description) }}</textarea>
-            @error('description') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label for="price_per_hour" class="text-dark font-weight-bold">Harga Per Jam</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text border-0 bg-info text-white font-weight-bold">Rp</span>
+                                    </div>
+                                    <input type="number" name="price_per_hour" id="price_per_hour" class="form-control form-control-lg border-0 bg-light rounded shadow-none @error('price_per_hour') is-invalid @enderror" value="{{ old('price_per_hour', $court->price_per_hour) }}" required>
+                                </div>
+                                @error('price_per_hour')
+                                    <div class="invalid-feedback d-block font-weight-bold small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-4">
+                                <label for="is_active" class="text-dark font-weight-bold">Status Saat Ini</label>
+                                <select name="is_active" id="is_active" class="form-control form-control-lg border-0 bg-light rounded shadow-none custom-select">
+                                    <option value="1" {{ old('is_active', $court->is_active) == '1' ? 'selected' : '' }}>AKTIF / TERSEDIA</option>
+                                    <option value="0" {{ old('is_active', $court->is_active) == '0' ? 'selected' : '' }}>NONAKTIF</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-        <div>
-            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="photo">Foto Lapangan (Optional)</label>
-            
-            @if($court->photo)
-                <div class="mb-4 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 inline-block">
-                    <img src="{{ asset('storage/' . $court->photo) }}" alt="{{ $court->name }}" class="h-32 rounded shadow-sm">
-                </div>
-            @endif
+                    <div class="form-group mb-4">
+                        <label for="description" class="text-dark font-weight-bold">Deskripsi Lapangan</label>
+                        <textarea name="description" id="description" rows="4" class="form-control border-0 bg-light rounded shadow-none @error('description') is-invalid @enderror">{{ old('description', $court->description) }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback font-weight-bold">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-            <input name="photo" id="photo" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 @error('photo') border-red-500 @enderror" type="file">
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Pilih file baru jika ingin mengubah. Max: 2MB, Format: jpg, png, jpeg, webp</p>
-            @error('photo') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-        </div>
+                    <div class="form-group mb-5">
+                        <label for="photo" class="text-dark font-weight-bold d-block">Update Foto Lapangan</label>
+                        <div class="row align-items-center">
+                            @if($court->photo)
+                            <div class="col-md-4 mb-3 mb-md-0 text-center">
+                                <div class="p-2 bg-white rounded shadow-sm h-100 d-flex align-items-center justify-content-center border" style="height: 150px !important;">
+                                    <img src="{{ asset('storage/' . $court->photo) }}" alt="{{ $court->name }}" class="img-fluid rounded" style="max-height: 100%;">
+                                </div>
+                                <p class="text-muted small mt-2 mb-0 font-italic">Foto Saat Ini</p>
+                            </div>
+                            @endif
+                            <div class="{{ $court->photo ? 'col-md-8' : 'col-md-12' }}">
+                                <div class="p-4 rounded-lg bg-light border-2 border-dashed border-gray d-flex flex-column align-items-center justify-content-center text-center">
+                                    <i class="fas fa-image fa-2x text-muted mb-2"></i>
+                                    <div class="custom-file" style="max-width: 300px;">
+                                        <input type="file" name="photo" class="custom-file-input" id="photo">
+                                        <label class="custom-file-label border-0 text-left rounded shadow-sm" for="photo">Ganti foto...</label>
+                                    </div>
+                                    <p class="text-muted small mt-2 mb-0 font-weight-light italic">Biarkan kosong jika tidak ingin diubah.</p>
+                                    @error('photo')
+                                        <div class="text-danger font-weight-bold small mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <div>
-            <label for="is_active" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
-            <select name="is_active" id="is_active" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="1" {{ old('is_active', $court->is_active) == '1' ? 'selected' : '' }}>Aktif</option>
-                <option value="0" {{ old('is_active', $court->is_active) == '0' ? 'selected' : '' }}>Nonaktif</option>
-            </select>
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a href="{{ route('admin.courts.index') }}" class="btn btn-link text-muted font-weight-bold px-0">
+                            <i class="fas fa-times mr-1"></i> Batal Ubah
+                        </a>
+                        <button type="submit" class="btn btn-info btn-lg shadow rounded-pill px-5 font-weight-bold text-uppercase small tracking-widest">
+                            SIMPAN PERUBAHAN
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="flex items-center space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700 mt-6">
-            <button type="submit" class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-600 shadow-lg shadow-primary-500/30 uppercase tracking-widest">
-                Update Lapangan
-            </button>
-            <a href="{{ route('admin.courts.index') }}" class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 uppercase tracking-widest">
-                Batal
-            </a>
-        </div>
-    </form>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function () {
+        $('.custom-file-input').on('change', function() {
+            let fileName = $(this).val().split('\\').pop();
+            $(this).next('.custom-file-label').addClass("selected").html(fileName);
+        });
+    });
+</script>
+@endpush
