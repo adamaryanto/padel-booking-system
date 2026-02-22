@@ -43,36 +43,31 @@
         <nav class="bg-dark/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-20">
+                    <!-- Logo Area -->
                     <div class="flex items-center">
-                        <a href="/" class="text-2xl font-black text-white tracking-tighter flex items-center group">
-                            <span class="bg-neon text-dark p-1.5 rounded-lg mr-2 group-hover:rotate-12 transition-transform duration-300">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/></svg>
-                            </span>
+                        <a href="/" class="text-2xl font-black text-white tracking-tighter hover:scale-105 transition-transform duration-300">
                             PADEL<span class="text-neon">MATE</span>
                         </a>
                     </div>
                     
+                    <!-- Navigation - Unified Right Aligned -->
                     <div class="hidden md:flex items-center space-x-10">
-                        <a href="{{ route('welcome') }}" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Home</a>
+                        <a href="{{ route('welcome') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Home</a>
+                        <a href="/#about" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
+                        <a href="/#courts" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
+                        
                         @auth
-                            <a href="/#courts" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Book Court</a>
-                            <a href="{{ route('dashboard') }}" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">My Bookings</a>
-                            <a href="{{ route('profile.edit') }}" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Profile</a>
+                            <a href="{{ route('dashboard') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
+                            <div class="flex items-center space-x-6 ml-4 pl-6 border-l border-white/10">
+                                <a href="{{ route('profile.edit') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profile</a>
+                                <form method="POST" action="{{ route('logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="text-[11px] font-black uppercase tracking-[0.2em] text-red-500/80 hover:text-red-500 transition">Logout</button>
+                                </form>
+                            </div>
                         @else
-                            <a href="/#about" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Fasilitas</a>
-                            <a href="/#courts" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Harga</a>
-                        @endauth
-                    </div>
-
-                    <div class="flex items-center space-x-6">
-                        @auth
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2 rounded-xl font-bold transition border border-white/10 uppercase text-xs tracking-widest">Logout</button>
-                            </form>
-                        @else
-                            <a href="{{ route('login') }}" class="text-sm font-bold uppercase tracking-widest hover:text-neon transition">Login</a>
-                            <a href="{{ route('register') }}" class="bg-neon text-dark px-7 py-3 rounded-xl font-black uppercase tracking-tighter hover:scale-105 transition transform active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)]">Daftar</a>
+                            <a href="{{ route('login') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
+                            <a href="{{ route('login') }}" class="bg-neon text-dark px-8 py-3 rounded-xl font-black uppercase tracking-tighter hover:scale-105 transition transform active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)] ml-4">Login</a>
                         @endauth
                     </div>
                 </div>
