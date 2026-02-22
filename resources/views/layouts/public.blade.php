@@ -40,7 +40,7 @@
     </head>
     <body class="antialiased bg-dark text-gray-300 font-sans selection:bg-neon selection:text-dark text-[15px]">
         <!-- Navbar -->
-        <nav class="bg-dark/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
+        <nav class="bg-dark/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50" x-data="{ mobileMenuOpen: false }">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-20">
                     <!-- Logo Area -->
@@ -50,7 +50,7 @@
                         </a>
                     </div>
                     
-                    <!-- Navigation - Unified Right Aligned -->
+                    <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-10">
                         <a href="{{ route('welcome') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Home</a>
                         <a href="/#about" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
@@ -70,7 +70,47 @@
                             <a href="{{ route('login') }}" class="bg-neon text-dark px-8 py-3 rounded-xl font-black uppercase tracking-tighter hover:scale-105 transition transform active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)] ml-4">Login</a>
                         @endauth
                     </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex items-center">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-white p-2 focus:outline-none">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="!mobileMenuOpen">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-show="mobileMenuOpen" x-cloak>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Mobile Navigation Menu -->
+            <div x-show="mobileMenuOpen" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 -translate-y-4"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 -translate-y-4"
+                 class="md:hidden bg-dark-card border-b border-white/5 px-6 py-8 space-y-6" x-cloak>
+                <a href="{{ route('welcome') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Home</a>
+                <a href="/#about" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
+                <a href="/#courts" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
+                
+                @auth
+                    <a href="{{ route('dashboard') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
+                    <div class="pt-6 border-t border-white/5 space-y-6">
+                        <a href="{{ route('profile.edit') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profile Settings</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block text-[13px] font-black uppercase tracking-[0.2em] text-red-500 font-black">LOGOUT</button>
+                        </form>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
+                    <a href="{{ route('login') }}" class="block bg-neon text-dark text-center py-4 rounded-2xl font-black uppercase tracking-tighter">Login Sekarang</a>
+                @endauth
             </div>
         </nav>
 
