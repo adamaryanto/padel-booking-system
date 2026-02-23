@@ -149,11 +149,11 @@
         <table>
             <tr>
                 <td class="brand-section">
-                    <div class="brand-name">PADELMATE</div>
+                    <div class="brand-name">PADELHUB</div>
                     <div class="company-info">
                         Professional Arena Management<br>
                         Jakarta, Indonesia<br>
-                        contact@padelmate.id
+                        contact@padelhub.id
                     </div>
                 </td>
                 <td>
@@ -227,13 +227,13 @@
     <div class="signature-section">
         <div class="section-title">Authorized Signature</div>
         <div class="signature-line"></div>
-        <div class="company-info">Management PadelMate</div>
+        <div class="company-info">Management PadelHub</div>
     </div>
 
     <div class="footer">
         <p>This is a computer-generated receipt and no signature is physically required for validation.</p>
-        <p>Thank you for booking with PadelMate. We look forward to seeing you at the arena.</p>
-        <p>&copy; {{ date('Y') }} PADELMATE INDONESIA. All rights reserved.</p>
+        <p>Thank you for booking with PadelHub. We look forward to seeing you at the arena.</p>
+        <p>&copy; {{ date('Y') }} PADELHUB INDONESIA. All rights reserved.</p>
     </div>
 </body>
 </html>

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'PadelMate') }} - @yield('title', 'Sporty Dark Modern Booking')</title>
+        <title>{{ config('app.name', 'PadelHub') }} - @yield('title', 'Sporty Dark Modern Booking')</title>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
                     <!-- Logo Area -->
                     <div class="flex items-center">
                         <a href="/" class="text-2xl font-black text-white tracking-tighter hover:scale-105 transition-transform duration-300">
-                            PADEL<span class="text-neon">MATE</span>
+                            PADEL<span class="text-neon">HUB</span>
                         </a>
                     </div>
                     
@@ -119,25 +119,25 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-dark-card border-t border-white/5 py-32 px-4 relative">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 relative z-10">
+        <footer class="bg-dark-card border-t border-white/5 py-10 px-4 relative">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
                 <div class="col-span-1 md:col-span-2">
-                    <a href="/" class="text-4xl font-black text-white tracking-tighter mb-8 block font-heading">PADEL<span class="text-neon">MATE</span></a>
-                    <p class="mb-12 max-w-sm leading-relaxed text-gray-500 font-medium text-lg italic">
-                        The elite standard in padel court management. Powered by athletes, for athletes.
+                    <a href="/" class="text-3xl font-black text-white tracking-tighter mb-4 block font-heading">PADEL<span class="text-neon">HUB</span></a>
+                    <p class="mb-6 max-w-sm leading-relaxed text-gray-500 font-medium text-sm italic">
+                        The elite standard in padel court management.
                     </p>
-                    <div class="flex space-x-6">
-                        <a href="#" class="bg-white/5 p-4 rounded-2xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-facebook-f text-xl"></i></a>
-                        <a href="#" class="bg-white/5 p-4 rounded-2xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="bg-white/5 p-4 rounded-2xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-twitter text-xl"></i></a>
+                    <div class="flex space-x-4">
+                        <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-facebook-f text-lg"></i></a>
+                        <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-instagram text-lg"></i></a>
+                        <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-twitter text-lg"></i></a>
                     </div>
                 </div>
                 <div>
-                    <h5 class="text-white font-black uppercase tracking-widest text-xs mb-8 italic">Contact HQ</h5>
-                    <ul class="space-y-6 text-gray-500 font-bold uppercase text-xs tracking-widest">
+                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">HQ Contact</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold uppercase text-[10px] tracking-widest">
                         <li class="flex items-start">
                             <span class="text-neon mr-3 mt-0.5"><i class="fas fa-map-marker-alt"></i></span>
-                            {{ $landingContent->contact_address ?? 'Kebayoran Elite Arena, Jakarta Selatan' }}
+                            {{ $landingContent->contact_address ?? 'Jakarta Selatan' }}
                         </li>
                         <li class="flex items-center">
                             <span class="text-neon mr-3"><i class="fas fa-phone-alt"></i></span>
@@ -146,17 +146,16 @@
                     </ul>
                 </div>
                 <div>
-                    <h5 class="text-white font-black uppercase tracking-widest text-xs mb-8 italic">Fast Access</h5>
-                    <ul class="space-y-6 text-gray-500 font-bold uppercase text-xs tracking-widest">
+                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">Access</h5>
+                    <ul class="space-y-4 text-gray-500 font-bold uppercase text-[10px] tracking-widest">
                         <li><a href="/#about" class="hover:text-neon transition">Our Arena</a></li>
                         <li><a href="/#courts" class="hover:text-neon transition">Court Specs</a></li>
-                        <li><a href="/#availability" class="hover:text-neon transition">Live Schedule</a></li>
                         <li><a href="{{ route('register') }}" class="hover:text-neon transition">Join Community</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="max-w-7xl mx-auto border-t border-white/5 mt-32 pt-12 text-center text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
-                <p>&copy; 2026 PadelMate Indonesia. Built for the modern athlete.</p>
+            <div class="max-w-7xl mx-auto border-t border-white/5 mt-8 pt-8 text-center text-[9px] font-black uppercase tracking-[0.5em] text-white/20">
+                <p>&copy; 2026 PadelHub Indonesia.</p>
             </div>
         </footer>
 

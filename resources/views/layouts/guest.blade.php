@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'PadelMate') }} - Access Portal</title>
+    <title>{{ config('app.name', 'PadelHub') }} - Access Portal</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,7 +50,7 @@
         <!-- Logo Area -->
         <div class="text-center mb-10">
             <a href="/" class="text-4xl font-black text-white tracking-tighter hover:scale-105 transition-transform duration-300 inline-block">
-                PADEL<span class="text-neon">MATE</span>
+                PADEL<span class="text-neon">HUB</span>
             </a>
             <p class="text-gray-500 font-bold uppercase tracking-[0.4em] text-[9px] mt-2">Elite Athlete Portal</p>
         </div>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="text-center mt-12 text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
-            &copy; {{ date('Y') }} PadelMate Indonesia. Driven by Excellence.
+            &copy; {{ date('Y') }} PadelHub Indonesia. Driven by Excellence.
         </div>
     </div>
 

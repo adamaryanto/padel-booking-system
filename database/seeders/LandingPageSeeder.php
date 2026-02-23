@@ -20,11 +20,11 @@ class LandingPageSeeder extends Seeder
             'hero_cta_link' => '#courts',
             'about_title' => 'The Future of Padel is Here',
             'about_subtitle' => 'THE ARENA',
-            'about_description' => 'Kami menghadirkan standar baru dalam dunia Padel di Indonesia. Dengan fasilitas kelas satu, lapangan bersertifikasi internasional, dan ekosistem komunitas yang dinamis, PadelMate adalah rumah bagi para juara.',
+            'about_description' => 'Kami menghadirkan standar baru dalam dunia Padel di Indonesia. Dengan fasilitas kelas satu, lapangan bersertifikasi internasional, dan ekosistem komunitas yang dinamis, PadelHub adalah rumah bagi para juara.',
             'about_image' => 'https://images.unsplash.com/photo-1593027552553-61b6c7030880?auto=format&fit=crop&q=80&w=2071',
             'contact_address' => 'Jl. Padel Champion No. 1, Jakarta Selatan',
             'contact_phone' => '+62 812 3456 7890',
-            'contact_email' => 'hello@padelmate.id',
+            'contact_email' => 'hello@padelhub.id',
             'whatsapp_number' => '6281234567890',
         ]);
     }

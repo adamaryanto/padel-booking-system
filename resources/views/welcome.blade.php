@@ -74,7 +74,7 @@
                     {{ $landingContent->about_title ?? 'THE FUTURE OF PADEL IS HERE' }}
                 </h2>
                 <p class="text-gray-500 text-base mb-12 leading-relaxed font-medium">
-                    {{ $landingContent->about_description ?? 'PadelMate bukan sekadar lapangan. Ini adalah ekosistem bagi pemenang.' }}
+                    {{ $landingContent->about_description ?? 'PadelHub bukan sekadar lapangan. Ini adalah ekosistem bagi pemenang.' }}
                 </p>
                 
                 <div class="grid grid-cols-2 gap-8">

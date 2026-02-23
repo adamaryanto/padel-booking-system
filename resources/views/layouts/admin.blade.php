@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Admin Padel | @yield('title', 'Dashboard')</title>
+    <title>Padel Hub | @yield('title', 'Dashboard')</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -12,6 +12,39 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
     
+    <style>
+        .preloader {
+            background-color: #fff;
+        }
+        .ball-loader {
+            display: flex;
+            gap: 12px;
+        }
+        .ball-loader .ball {
+            width: 15px;
+            height: 15px;
+            background-color: #007bff;
+            border-radius: 50%;
+            animation: ball-bounce 0.8s infinite ease-in-out alternate;
+        }
+        .ball-loader .ball:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .ball-loader .ball:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes ball-bounce {
+            from {
+                transform: translateY(10px);
+                opacity: 0.3;
+            }
+            to {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+    </style>
+    
     @stack('styles')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -19,7 +52,11 @@
 
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-        <i class="fas fa-trophy fa-3x text-primary animate-bounce"></i>
+        <div class="ball-loader">
+            <div class="ball"></div>
+            <div class="ball"></div>
+            <div class="ball"></div>
+        </div>
     </div>
 
     <!-- Navbar -->
@@ -69,11 +106,8 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="{{ route('admin.dashboard') }}" class="brand-link border-bottom-0 shadow-sm">
-            <span class="brand-image img-circle elevation-3 d-flex align-items-center justify-content-center bg-primary text-white font-weight-bold" style="width: 33px; height: 33px; opacity: .8">
-                <i class="fas fa-trophy text-sm"></i>
-            </span>
-            <span class="brand-text font-weight-bold">PADEL <span class="text-primary">ADMIN</span></span>
+        <a href="{{ route('admin.dashboard') }}" class="brand-link border-bottom-0 shadow-sm text-center">
+            <span class="brand-text font-weight-bold">PADEL <span class="text-primary">HUB</span></span>
         </a>
 
         <!-- Sidebar -->
