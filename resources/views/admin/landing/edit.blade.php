@@ -34,7 +34,7 @@
             <div class="card card-outline card-primary shadow-sm border-0 mb-4">
                 <div class="card-header border-0 mt-2">
                     <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
-                        <i class="fas fa-rocket mr-2 text-primary"></i>Hero Section (Bagian Atas)
+                        Hero Section (Bagian Atas)
                     </h3>
                 </div>
                 <div class="card-body">
@@ -76,7 +76,7 @@
             <div class="card card-outline card-success shadow-sm border-0 mb-4">
                 <div class="card-header border-0 mt-2">
                     <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
-                        <i class="fas fa-leaf mr-2 text-success"></i>About Section (Fasilitas)
+                        About Section (Fasilitas)
                     </h3>
                 </div>
                 <div class="card-body">
@@ -118,7 +118,7 @@
             <div class="card card-outline card-warning shadow-sm border-0 mb-5">
                 <div class="card-header border-0 mt-2">
                     <h3 class="card-title font-weight-bold text-muted small text-uppercase tracking-wider">
-                        <i class="fas fa-headset mr-2 text-warning"></i>Informasi Kontak & Footer
+                        Informasi Kontak & Footer
                     </h3>
                 </div>
                 <div class="card-body">
@@ -126,33 +126,21 @@
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="contact_phone" class="text-dark font-weight-bold">Phone Number</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-phone text-muted"></i></span></div>
-                                    <input type="text" name="contact_phone" id="contact_phone" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_phone', $content->contact_phone) }}">
-                                </div>
+                                <input type="text" name="contact_phone" id="contact_phone" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('contact_phone', $content->contact_phone) }}">
                             </div>
                             <div class="form-group mb-3">
                                 <label for="contact_email" class="text-dark font-weight-bold">Email Address</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-envelope text-muted"></i></span></div>
-                                    <input type="email" name="contact_email" id="contact_email" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_email', $content->contact_email) }}">
-                                </div>
+                                <input type="email" name="contact_email" id="contact_email" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('contact_email', $content->contact_email) }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="whatsapp_number" class="text-dark font-weight-bold">WhatsApp Number</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fab fa-whatsapp text-muted"></i></span></div>
-                                    <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('whatsapp_number', $content->whatsapp_number) }}">
-                                </div>
+                                <input type="text" name="whatsapp_number" id="whatsapp_number" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('whatsapp_number', $content->whatsapp_number) }}">
                             </div>
                             <div class="form-group mb-3">
                                 <label for="contact_address" class="text-dark font-weight-bold">Physical Address</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text border-0 bg-light"><i class="fas fa-map-marker-alt text-muted"></i></span></div>
-                                    <input type="text" name="contact_address" id="contact_address" class="form-control border-0 bg-light rounded-right shadow-none" value="{{ old('contact_address', $content->contact_address) }}">
-                                </div>
+                                <input type="text" name="contact_address" id="contact_address" class="form-control border-0 bg-light rounded shadow-none" value="{{ old('contact_address', $content->contact_address) }}">
                             </div>
                         </div>
                     </div>
@@ -161,7 +149,7 @@
 
             <div class="sticky-top py-3 text-right" style="bottom: 20px; z-index: 1020;">
                 <button type="submit" class="btn btn-primary btn-lg shadow-lg px-5 rounded-pill font-weight-bold text-uppercase small tracking-widest">
-                    <i class="fas fa-save mr-2"></i> Update Landing Page
+                    Update Landing Page
                 </button>
             </div>
         </form>

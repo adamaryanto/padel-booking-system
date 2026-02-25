@@ -6,11 +6,11 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible shadow-sm border-0">
+        @if(session('info'))
+            <div class="alert alert-info alert-dismissible shadow-sm border-0">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-check"></i> Berhasil!</h5>
-                {{ session('success') }}
+                <h5><i class="icon fas fa-info"></i> Info</h5>
+                {{ session('info') }}
             </div>
         @endif
 
@@ -67,7 +67,7 @@
                                         <a href="{{ route('admin.courts.edit', $court) }}" class="btn btn-info btn-sm px-3" title="Edit">
                                            <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.courts.destroy', $court) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lapangan ini?')" class="d-inline">
+                                        <form action="{{ route('admin.courts.destroy', $court) }}" method="POST" class="d-inline delete-confirm">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm px-3 border-left" title="Hapus">

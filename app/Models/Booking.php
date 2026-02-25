@@ -16,6 +16,8 @@ class Booking extends Model
         'start_time',
         'end_time',
         'total_price',
+        'original_price',
+        'discount_amount',
         'status',
     ];
 

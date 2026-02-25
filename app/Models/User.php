@@ -49,4 +49,26 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function memberships()
+    {
+        return $this->hasMany(Membership::class);
+    }
+
+    public function activeMembership()
+    {
+        return $this->memberships()->where('status', 'active')
+            ->whereDate('end_date', '>=', now()->toDateString())
+            ->latest()
+            ->first();
+    }
+
+    public function getAllowedBookingWindow()
+    {
+        $membership = $this->activeMembership();
+        if ($membership && $membership->tier) {
+            return $membership->tier->booking_window_days ?? 7;
+        }
+
+        return 2; // Default for non-members
+    }
 }

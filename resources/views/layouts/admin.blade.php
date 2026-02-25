@@ -14,7 +14,9 @@
     
     <style>
         .preloader {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         .ball-loader {
             display: flex;
@@ -41,6 +43,20 @@
             to {
                 transform: translateY(-10px);
                 opacity: 1;
+            }
+        }
+
+        /* Sidebar Push Layout on Hover */
+        @media (min-width: 992px) {
+            .sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .content-wrapper,
+            .sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .main-header,
+            .sidebar-mini.sidebar-collapse .main-sidebar:hover ~ .main-footer {
+                margin-left: 250px !important;
+                transition: margin-left .3s ease-in-out;
+            }
+            
+            .sidebar-mini.sidebar-collapse .main-sidebar {
+                transition: width .3s ease-in-out;
             }
         }
     </style>
@@ -139,6 +155,13 @@
                             <p>Booking & Pembayaran</p>
                         </a>
                     </li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ route('admin.membership-tiers.index') }}" class="nav-link {{ request()->routeIs('admin.membership-tiers.*') ? 'active shadow' : '' }}">
+                            <i class="nav-icon fas fa-id-card"></i>
+                            <p>Membership Tiers</p>
+                        </a>
+                    </li>
 
                     <li class="nav-header text-uppercase small opacity-50 font-weight-bold mt-4 mb-2">Settings</li>
 
@@ -196,6 +219,57 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(window).on('load', function() {
+        setTimeout(function() {
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    background: '#fff',
+                    color: '#333'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Opps!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#dc3545'
+                });
+            @endif
+        }, 500);
+    });
+
+    // Global SweetAlert2 Confirmation for Deletion
+    $(document).on('submit', '.delete-confirm', function(e) {
+        e.preventDefault();
+        var form = this;
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data yang dihapus tidak dapat dikembalikan!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+</script>
 
 @stack('scripts')
 </body>

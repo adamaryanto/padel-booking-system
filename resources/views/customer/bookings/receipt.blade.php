@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Official Receipt #{{ $booking->id }}</title>
+    <title>Kuitansi Resmi #{{ $booking->id }}</title>
     <style>
         @page {
             margin: 0.5cm;
@@ -151,13 +151,13 @@
                 <td class="brand-section">
                     <div class="brand-name">PADELHUB</div>
                     <div class="company-info">
-                        Professional Arena Management<br>
+                        Manajemen Arena Profesional<br>
                         Jakarta, Indonesia<br>
                         contact@padelhub.id
                     </div>
                 </td>
                 <td>
-                    <div class="invoice-title">Official Receipt</div>
+                    <div class="invoice-title">Kuitansi Resmi</div>
                     <div class="document-id">No: #{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</div>
                 </td>
             </tr>
@@ -167,12 +167,12 @@
     <table class="details-grid">
         <tr>
             <td width="50%">
-                <span class="section-title">Billed To</span>
+                <span class="section-title">Ditagihkan Kepada</span>
                 <div class="detail-value">{{ $booking->user->name }}</div>
                 <div class="company-info">{{ $booking->user->email }}</div>
             </td>
             <td width="50%">
-                <span class="section-title">Date of Issue</span>
+                <span class="section-title">Tanggal Terbit</span>
                 <div class="detail-value">{{ now()->format('d F Y') }}</div>
             </td>
         </tr>
@@ -181,9 +181,9 @@
     <table class="booking-table">
         <thead>
             <tr>
-                <th>Description</th>
-                <th>Schedule</th>
-                <th>Price</th>
+                <th>Deskripsi</th>
+                <th>Jadwal</th>
+                <th>Harga</th>
                 <th>Status</th>
             </tr>
         </thead>
@@ -191,7 +191,7 @@
             <tr>
                 <td>
                     <div class="detail-value">{{ $booking->court->name }}</div>
-                    <div class="company-info">Arena Reservation</div>
+                    <div class="company-info">Reservasi Arena</div>
                 </td>
                 <td>
                     <div class="detail-value">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</div>
@@ -201,7 +201,7 @@
                     <div class="detail-value">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</div>
                 </td>
                 <td>
-                    <span class="status-badge status-verified">VERIFIED</span>
+                    <span class="status-badge status-verified">TERVERIFIKASI</span>
                 </td>
             </tr>
         </tbody>
@@ -214,25 +214,25 @@
                 <td style="text-align: right;">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td>Tax (0%)</td>
+                <td>Pajak (0%)</td>
                 <td style="text-align: right;">Rp 0</td>
             </tr>
             <tr class="total-row">
-                <td>Total Amount</td>
+                <td>Total Keseluruhan</td>
                 <td style="text-align: right;">Rp {{ number_format($booking->total_price, 0, ',', '.') }}</td>
             </tr>
         </table>
     </div>
 
     <div class="signature-section">
-        <div class="section-title">Authorized Signature</div>
+        <div class="section-title">Tanda Tangan Sah</div>
         <div class="signature-line"></div>
         <div class="company-info">Management PadelHub</div>
     </div>
 
     <div class="footer">
-        <p>This is a computer-generated receipt and no signature is physically required for validation.</p>
-        <p>Thank you for booking with PadelHub. We look forward to seeing you at the arena.</p>
+        <p>Kuitansi ini dibuat secara otomatis oleh komputer dan tidak memerlukan tanda tangan fisik untuk validasi.</p>
+        <p>Terima kasih telah memesan di PadelHub. Sampai jumpa di arena!</p>
         <p>&copy; {{ date('Y') }} PADELHUB INDONESIA. All rights reserved.</p>
     </div>
 </body>

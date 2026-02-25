@@ -11,8 +11,10 @@ class Payment extends Model
 
     protected $fillable = [
         'booking_id',
+        'membership_id',
         'proof_of_payment',
         'status',
+        'order_id',
         'snap_token',
         'transaction_id',
         'payment_type',
@@ -22,5 +24,10 @@ class Payment extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    public function membership()
+    {
+        return $this->belongsTo(Membership::class);
     }
 }

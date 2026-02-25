@@ -1,11 +1,36 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Padel Hub - Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem manajemen dan pemesanan lapangan Padel modern.
+
+## Changelog 23 Februari 2026
+
+Hari ini kami telah melakukan beberapa pembaruan signifikan untuk meningkatkan pengalaman pengguna dan branding:
+
+### 🚀 Fitur & Pembaruan
+- **Fasilitas Dinamis**: Menambahkan input fasilitas pada manajemen lapangan (Admin) yang ditampilkan secara otomatis di Landing Page.
+- **Optimasi Mobile**: Penyesuaian responsivitas pada Hero Section dan layout padding untuk pengalaman mobile yang lebih baik.
+- **SweetAlert2 Global**: Integrasi sistem notifikasi popup modern untuk sukses dan error di seluruh halaman aplikasi (Admin & Public).
+- **Sinkronisasi Notifikasi**: Sinkronisasi sistem popup agar muncul secara halus hanya setelah animasi loading selesai.
+- **Dialog Konfirmasi Modern**: Mengganti dialog konfirmasi bawaan browser (seperti hapus data) dengan SweetAlert2 yang interaktif.
+
+### 🎨 UI/UX & Branding
+- **Rebranding Padel Hub**: Mengubah nama sistem dari "Padel Admin" menjadi "Padel Hub" dan memperbarui identitas visual sidebar.
+- **Ball Bounce Loader**: Mengganti animasi loading dengan *ball bounce* yang dikombinasikan dengan efek *glassmorphism* (overlay transparan & blur).
+- **Sidebar Push Layout**: Sidebar admin kini mendorong konten utama saat di-hover (dalam kondisi collapse), memberikan kesan interaksi yang lebih modern.
+
+### 🛠️ File yang Diubah
+- `resources/views/layouts/admin.blade.php` (UI Branding, Loader, Sidebar Layout, SweetAlert2)
+- `resources/views/layouts/public.blade.php` (SweetAlert2, Mobile Menu)
+- `resources/views/welcome.blade.php` (Landing Page, Mobile Optimization, Dynamic Facilities)
+- `resources/views/admin/courts/index.blade.php` (Alert Cleanup)
+- `app/Models/Court.php` (Model Update)
+- `app/Http/Controllers/CourtController.php` (Logic Update)
+- `resources/views/admin/courts/create.blade.php` (Admin Form)
+- `resources/views/admin/courts/edit.blade.php` (Admin Form)
+- `database/migrations/2026_02_23_041543_add_facilities_to_courts_table.php` (Database Schema)
+- `README.md` (Documentation)
+
+---
 
 ## About Laravel
 

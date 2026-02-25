@@ -53,21 +53,46 @@
                     <!-- Desktop Navigation -->
                     <div class="hidden md:flex items-center space-x-10">
                         <a href="{{ route('welcome') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Home</a>
-                        <a href="/#about" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
-                        <a href="/#courts" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
                         
                         @auth
-                            <a href="{{ route('dashboard') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
-                            <div class="flex items-center space-x-6 ml-4 pl-6 border-l border-white/10">
-                                <a href="{{ route('profile.edit') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profile</a>
-                                <form method="POST" action="{{ route('logout') }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="text-[11px] font-black uppercase tracking-[0.2em] text-red-500/80 hover:text-red-500 transition">Logout</button>
-                                </form>
+                            @if(auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Dashboard</a>
+                                <a href="{{ route('admin.courts.index') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Kelola Lapangan</a>
+                                <a href="{{ route('admin.bookings.index') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking & Pembayaran</a>
+                                <a href="{{ route('admin.membership-tiers.index') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Membership</a>
+                                <a href="{{ route('profile.edit') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profil</a>
+                            @else
+                                <a href="{{ route('welcome') }}#courts" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Pesan Arena</a>
+                                <a href="{{ route('dashboard') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Aktivitas Saya</a>
+                                <a href="{{ route('membership.index') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Membership</a>
+                            @endif
+                            <!-- Profile Dropdown -->
+                            <div class="relative ml-4 pl-6 border-l border-white/10" x-data="{ open: false }">
+                                <button @click="open = !open" @click.away="open = false" class="flex items-center space-x-2 text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition focus:outline-none">
+                                    <span>Profil</span>
+                                    <svg class="w-3 h-3 transition-transform duration-200" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                <div x-show="open" 
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="opacity-0 scale-95"
+                                     x-transition:enter-end="opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="opacity-100 scale-100"
+                                     x-transition:leave-end="opacity-0 scale-95"
+                                     class="absolute right-0 mt-4 w-48 bg-dark-card border border-white/10 rounded-2xl shadow-2xl py-2 z-50" x-cloak>
+                                    <a href="{{ route('profile.edit') }}" class="block px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white hover:text-neon hover:bg-white/5 transition">Pengaturan</a>
+                                    <div class="border-t border-white/5 my-1"></div>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-6 py-3 text-[10px] font-black uppercase tracking-widest text-red-500/80 hover:text-red-500 hover:bg-white/5 transition">Logout</button>
+                                    </form>
+                                </div>
                             </div>
                         @else
-                            <a href="{{ route('login') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
-                            <a href="{{ route('login') }}" class="bg-neon text-dark px-8 py-3 rounded-xl font-black uppercase tracking-tighter hover:scale-105 transition transform active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)] ml-4">Login</a>
+                            <a href="/#about" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
+                            <a href="/#courts" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
+                            <a href="{{ route('login') }}" class="text-[11px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Masuk</a>
+                            <a href="{{ route('register') }}" class="bg-neon text-dark px-8 py-3 rounded-xl font-black uppercase tracking-tighter hover:scale-105 transition transform active:scale-95 shadow-[0_0_20px_rgba(190,242,100,0.3)] ml-4">Daftar</a>
                         @endauth
                     </div>
 
@@ -95,21 +120,32 @@
                  x-transition:leave-end="opacity-0 -translate-y-4"
                  class="md:hidden bg-dark-card border-b border-white/5 px-6 py-8 space-y-6" x-cloak>
                 <a href="{{ route('welcome') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Home</a>
-                <a href="/#about" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
-                <a href="/#courts" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
                 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Dashboard</a>
+                        <a href="{{ route('admin.courts.index') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Kelola Lapangan</a>
+                        <a href="{{ route('admin.bookings.index') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Kelola Booking & Pembayaran</a>
+                        <a href="{{ route('admin.membership-tiers.index') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Kelola Membership</a>
+                        <a href="{{ route('profile.edit') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profil</a>
+                    @else
+                        <a href="{{ route('welcome') }}#courts" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Pesan Arena</a>
+                        <a href="{{ route('dashboard') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Aktivitas Saya</a>
+                        <a href="{{ route('membership.index') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Membership</a>
+                    @endif
                     <div class="pt-6 border-t border-white/5 space-y-6">
-                        <a href="{{ route('profile.edit') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Profile Settings</a>
+                        <p class="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Profile</p>
+                        <a href="{{ route('profile.edit') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Settings</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="block text-[13px] font-black uppercase tracking-[0.2em] text-red-500 font-black">LOGOUT</button>
+                            <button type="submit" class="block text-[13px] font-black uppercase tracking-[0.2em] text-red-500 font-black">KELUAR</button>
                         </form>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Booking</a>
-                    <a href="{{ route('login') }}" class="block bg-neon text-dark text-center py-4 rounded-2xl font-black uppercase tracking-tighter">Login Sekarang</a>
+                    <a href="/#about" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Fasilitas</a>
+                    <a href="/#courts" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Harga</a>
+                    <a href="{{ route('login') }}" class="block text-[13px] font-black uppercase tracking-[0.2em] hover:text-neon transition">Masuk</a>
+                    <a href="{{ route('register') }}" class="block bg-neon text-dark text-center py-4 rounded-2xl font-black uppercase tracking-tighter">Daftar Sekarang</a>
                 @endauth
             </div>
         </nav>
@@ -124,7 +160,7 @@
                 <div class="col-span-1 md:col-span-2">
                     <a href="/" class="text-3xl font-black text-white tracking-tighter mb-4 block font-heading">PADEL<span class="text-neon">HUB</span></a>
                     <p class="mb-6 max-w-sm leading-relaxed text-gray-500 font-medium text-sm italic">
-                        The elite standard in padel court management.
+                        Standar elit dalam manajemen lapangan padel.
                     </p>
                     <div class="flex space-x-4">
                         <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-facebook-f text-lg"></i></a>
@@ -133,7 +169,7 @@
                     </div>
                 </div>
                 <div>
-                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">HQ Contact</h5>
+                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">Hubungi Kami</h5>
                     <ul class="space-y-4 text-gray-500 font-bold uppercase text-[10px] tracking-widest">
                         <li class="flex items-start">
                             <span class="text-neon mr-3 mt-0.5"><i class="fas fa-map-marker-alt"></i></span>
@@ -146,11 +182,11 @@
                     </ul>
                 </div>
                 <div>
-                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">Access</h5>
+                    <h5 class="text-white font-black uppercase tracking-widest text-[10px] mb-6 italic">Akses</h5>
                     <ul class="space-y-4 text-gray-500 font-bold uppercase text-[10px] tracking-widest">
-                        <li><a href="/#about" class="hover:text-neon transition">Our Arena</a></li>
-                        <li><a href="/#courts" class="hover:text-neon transition">Court Specs</a></li>
-                        <li><a href="{{ route('register') }}" class="hover:text-neon transition">Join Community</a></li>
+                        <li><a href="/#about" class="hover:text-neon transition">Arena Kami</a></li>
+                        <li><a href="/#courts" class="hover:text-neon transition">Spek Lapangan</a></li>
+                        <li><a href="{{ route('register') }}" class="hover:text-neon transition">Gabung Komunitas</a></li>
                     </ul>
                 </div>
             </div>
@@ -161,6 +197,44 @@
 
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    @if(session('success'))
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: "{{ session('success') }}",
+                            showConfirmButton: false,
+                            timer: 2000,
+                            background: '#1e293b',
+                            color: '#fff',
+                            customClass: {
+                                popup: 'rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-xl'
+                            }
+                        });
+                    @endif
+
+                    @if(session('error'))
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oppss!',
+                            text: "{{ session('error') }}",
+                            confirmButtonColor: '#ef4444',
+                            background: '#1e293b',
+                            color: '#fff',
+                            customClass: {
+                                popup: 'rounded-[2rem] border border-white/5 shadow-2xl backdrop-blur-xl'
+                            }
+                        });
+                    @endif
+                }, 500);
+            });
+        </script>
+
         @stack('scripts')
     </body>
 </html>

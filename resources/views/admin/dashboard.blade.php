@@ -4,74 +4,107 @@
 @section('header', 'Dashboard Overview')
 
 @section('content')
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-info shadow-sm border-0">
-            <div class="inner">
-                <h3>{{ $totalBookingToday }}</h3>
-                <p class="font-weight-bold text-uppercase small">Booking Hari Ini</p>
+<div class="row mt-4">
+    <!-- Booking Today -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box bg-info shadow border-0 h-100 rounded-lg overflow-hidden">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;">{{ $totalBookingToday }}</h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Booking Hari Ini</p>
             </div>
-            <div class="icon">
-                <i class="fas fa-calendar-check"></i>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-calendar-check fa-2x"></i>
             </div>
-            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer">
-                Selengkapnya <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
+                Selengkapnya <i class="fas fa-arrow-circle-right ml-1"></i>
             </a>
         </div>
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-success shadow-sm border-0">
-            <div class="inner">
-                <h3><sup style="font-size: 20px">Rp</sup>{{ number_format($totalRevenue/1000, 0, ',', '.') }}<small class="text-white-50">k</small></h3>
-                <p class="font-weight-bold text-uppercase small">Total Pendapatan</p>
+
+    <!-- Court Revenue -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box bg-success shadow border-0 h-100 rounded-lg overflow-hidden">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($courtRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Pendapatan Lapangan</p>
             </div>
-            <div class="icon">
-                <i class="fas fa-wallet"></i>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-table-tennis-paddle-ball fa-2x"></i>
             </div>
-            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer">
-                Detail Transaksi <i class="fas fa-arrow-circle-right"></i>
+            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
+                Lihat Detail <i class="fas fa-arrow-circle-right ml-1"></i>
             </a>
         </div>
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-warning shadow-sm border-0 text-white">
-            <div class="inner">
-                <h3 class="text-white">{{ $pendingVerification }}</h3>
-                <p class="font-weight-bold text-uppercase small">Menunggu Verifikasi</p>
+
+    <!-- Membership Revenue -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box shadow border-0 h-100 rounded-lg overflow-hidden text-white" style="background: linear-gradient(135deg, #6610f2, #6f42c1);">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($membershipRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Pendapatan Member</p>
             </div>
-            <div class="icon">
-                <i class="fas fa-clock"></i>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-id-card fa-2x"></i>
             </div>
-            <a href="{{ route('admin.bookings.index') }}?status=pending" class="small-box-footer text-white">
-                Verifikasi Sekarang <i class="fas fa-arrow-circle-right text-white"></i>
+            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
+                Lihat Detail <i class="fas fa-arrow-circle-right ml-1"></i>
             </a>
         </div>
     </div>
-    <!-- ./col -->
-    <div class="col-lg-3 col-6">
-        <!-- small box -->
-        <div class="small-box bg-danger shadow-sm border-0">
-            <div class="inner">
-                <h3>{{ $totalCourts }}</h3>
-                <p class="font-weight-bold text-uppercase small">Total Lapangan</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-table-tennis-paddle-ball"></i>
-            </div>
-            <a href="{{ route('admin.courts.index') }}" class="small-box-footer">
-                Kelola Lapangan <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <!-- ./col -->
 </div>
 
-<div class="row">
+<div class="row mt-2">
+    <!-- Monthly Total -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box bg-dark shadow border-0 h-100 rounded-lg overflow-hidden">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($monthlyTotalRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Akumulasi Bulan Ini</p>
+            </div>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-chart-line fa-2x"></i>
+            </div>
+            <div class="small-box-footer bg-dark-50 py-2 text-white-50 italic small">
+                Total Pendapatan Terverifikasi
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Verification -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box bg-warning shadow border-0 h-100 rounded-lg overflow-hidden text-white">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1 text-white" style="font-size: 1.8rem;">{{ $pendingVerification }}</h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-100" style="color: rgba(255,255,255,0.9);">Pending Verifikasi</p>
+            </div>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-clock fa-2x text-white"></i>
+            </div>
+            <a href="{{ route('admin.bookings.index') }}?status=pending" class="small-box-footer bg-dark-50 py-2 text-white">
+                Cek Booking & Member <i class="fas fa-arrow-circle-right ml-1 text-white"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Courts -->
+    <div class="col-lg-4 col-sm-6 mb-4">
+        <div class="small-box bg-danger shadow border-0 h-100 rounded-lg overflow-hidden">
+            <div class="inner p-3">
+                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;">{{ $totalCourts }}</h3>
+                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Tersedia Lapangan</p>
+            </div>
+            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
+                <i class="fas fa-border-all fa-2x"></i>
+            </div>
+            <a href="{{ route('admin.courts.index') }}" class="small-box-footer bg-dark-50 py-2">
+                Kelola Assets <i class="fas fa-arrow-circle-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
     <div class="col-lg-8">
         <div class="card card-outline card-primary shadow-sm">
             <div class="card-header">
@@ -184,13 +217,17 @@
             $defaultData = [0, 0, 0, 0, 0, 0, 0];
             $defaultDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
         @endphp
-        const bookingData = @json($weeklyBookingData ?? $defaultData);
+        const bookingRevenue = @json($weeklyBookingRevenue ?? $defaultData);
+        const membershipRevenue = @json($weeklyMembershipRevenue ?? $defaultData);
         const days = @json($weeklyBookingDays ?? $defaultDays);
 
         var options = {
             series: [{
-                name: 'Total Booking',
-                data: bookingData
+                name: 'Pendapatan Lapangan',
+                data: bookingRevenue
+            }, {
+                name: 'Pendapatan Membership',
+                data: membershipRevenue
             }],
             chart: {
                 type: 'area',
@@ -199,7 +236,7 @@
                 fontFamily: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
             },
             dataLabels: { enabled: false },
-            colors: ['#007bff'],
+            colors: ['#28a745', '#6f42c1'],
             stroke: {
                 curve: 'smooth',
                 width: 3
@@ -220,7 +257,9 @@
             },
             yaxis: {
                 labels: {
-                    formatter: function(val) { return Math.floor(val); }
+                    formatter: function(val) { 
+                        return 'Rp ' + val.toLocaleString('id-ID');
+                    }
                 }
             },
             grid: {
@@ -230,11 +269,16 @@
             markers: {
                 size: 4,
                 strokeWidth: 2,
-                colors: ['#007bff'],
+                colors: ['#28a745', '#6f42c1'],
                 hover: { size: 7 }
             },
             tooltip: {
-                theme: 'light'
+                theme: 'light',
+                y: {
+                    formatter: function(val) {
+                        return 'Rp ' + val.toLocaleString('id-ID');
+                    }
+                }
             }
         };
 
