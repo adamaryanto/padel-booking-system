@@ -25,6 +25,16 @@ Route::get('/storage-link', function () {
     }
 })->name('storage.link');
 
+// Database Seed helper for cPanel hosting (publicly accessible before login)
+Route::get('/db-seed', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('db:seed');
+        return response('Database seeded successfully! (Dummy courts, memberships, and default admin accounts created)<br><br><a href="' . url('/') . '" style="padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-family: sans-serif; font-size: 14px;">Kembali ke Beranda</a>');
+    } catch (\Exception $e) {
+        return response('Failed to seed database: ' . $e->getMessage() . '<br><br><a href="' . url('/') . '" style="padding: 8px 16px; background: #ef4444; color: white; text-decoration: none; border-radius: 6px; font-family: sans-serif; font-size: 14px;">Kembali ke Beranda</a>');
+    }
+})->name('db.seed');
+
 Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
     Route::get('/my-bookings', [CustomerBooking::class, 'dashboard'])->name('dashboard');
     
