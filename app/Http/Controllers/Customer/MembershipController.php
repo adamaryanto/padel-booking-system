@@ -72,7 +72,7 @@ class MembershipController extends Controller
                 'status' => 'active',
                 'tier_name' => $activeMembership->tier->name,
                 'end_date' => $activeMembership->end_date->format('d M Y'),
-                'discount' => $activeMembership->tier->discount_percentage,
+                'discount' => ($activeMembership->tier->discount_weekday ?? 0) + ($activeMembership->tier->discount_weekend ?? 0),
                 'current_tier_id' => $activeMembership->membership_tier_id,
                 'receipt_url' => route('memberships.receipt', $activeMembership)
             ]);

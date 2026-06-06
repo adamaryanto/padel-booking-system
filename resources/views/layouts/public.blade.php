@@ -179,6 +179,17 @@
                             <span class="text-neon mr-3"><i class="fas fa-phone-alt"></i></span>
                             {{ $landingContent->contact_phone ?? '+62 812 3456 7890' }}
                         </li>
+                        <li class="flex items-center">
+                            <span class="text-neon mr-3"><i class="fas fa-envelope"></i></span>
+                            {{ $landingContent->contact_email ?? 'hello@padelhub.com' }}
+                        </li>
+                        @if($landingContent->whatsapp_number)
+                        <li class="mt-4">
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $landingContent->whatsapp_number) }}" target="_blank" class="bg-green-500/10 text-green-500 border border-green-500/20 px-4 py-2 rounded-xl inline-flex items-center hover:bg-green-500 hover:text-white transition group">
+                                <i class="fab fa-whatsapp mr-2 text-lg"></i> Chat Admin
+                            </a>
+                        </li>
+                        @endif
                     </ul>
                 </div>
                 <div>

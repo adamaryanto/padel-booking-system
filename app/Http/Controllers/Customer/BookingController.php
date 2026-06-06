@@ -30,10 +30,30 @@ class BookingController extends Controller
 
     public function index()
     {
+        $preview = request()->has('preview');
+        if (Auth::check() && Auth::user()->role === \App\Models\User::ROLE_ADMIN && !$preview) {
+            abort(404);
+        }
+
         $courts = Court::where('is_active', true)->get();
-        $landingContent = LandingPageContent::first() ?? new LandingPageContent();
+        $faqs = \App\Models\Faq::orderBy('order')->get();
         
-        return view('welcome', compact('courts', 'landingContent'));
+        $landingContent = null;
+        $landingExtras = [];
+        
+        if ($preview && \Illuminate\Support\Facades\Storage::disk('public')->exists('landing/draft.json')) {
+            $draftData = json_decode(\Illuminate\Support\Facades\Storage::disk('public')->get('landing/draft.json'), true);
+            $landingContent = new LandingPageContent();
+            $landingContent->forceFill($draftData['db_fields'] ?? []);
+            $landingExtras = $draftData['extras_fields'] ?? [];
+        } else {
+            $landingContent = LandingPageContent::first() ?? new LandingPageContent();
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists('landing/extras.json')) {
+                $landingExtras = json_decode(\Illuminate\Support\Facades\Storage::disk('public')->get('landing/extras.json'), true);
+            }
+        }
+        
+        return view('welcome', compact('courts', 'landingContent', 'faqs', 'landingExtras'));
     }
 
     public function show(Court $court)
@@ -42,7 +62,12 @@ class BookingController extends Controller
         $allowedDays = Auth::check() ? Auth::user()->getAllowedBookingWindow() : 2;
         $maxDate = now()->addDays($allowedDays)->format('Y-m-d');
         
-        return view('customer.courts.show', compact('court', 'landingContent', 'allowedDays', 'maxDate'));
+        $user = Auth::user();
+        $membership = $user ? $user->activeMembership() : null;
+        $discountWeekday = $membership ? $membership->tier->discount_weekday : 0;
+        $discountWeekend = $membership ? $membership->tier->discount_weekend : 0;
+        
+        return view('customer.courts.show', compact('court', 'landingContent', 'allowedDays', 'maxDate', 'discountWeekday', 'discountWeekend'));
     }
 
     public function store(Request $request)

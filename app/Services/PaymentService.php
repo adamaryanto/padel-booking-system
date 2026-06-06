@@ -187,6 +187,12 @@ class PaymentService
     {
         $transaction = $status->transaction_status;
         if ($transaction == 'capture' || $transaction == 'settlement') {
+            // Expire any existing active memberships for this user
+            Membership::where('user_id', $membership->user_id)
+                ->where('id', '!=', $membership->id)
+                ->where('status', 'active')
+                ->update(['status' => 'expired']);
+
             $membership->update([
                 'status' => 'active',
                 'start_date' => now(),

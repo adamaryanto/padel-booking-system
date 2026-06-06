@@ -46,7 +46,8 @@ class BookingService
             $endHour = 24;
         }
 
-        $isToday = Carbon::parse($date)->isToday();
+        $todayStr = now()->format('Y-m-d');
+        $isToday = $date === $todayStr;
         $currentTime = now();
 
         $slots = [];
@@ -56,8 +57,8 @@ class BookingService
 
             // Check if time is in the past for today
             if ($isToday) {
-                $slotDateTime = Carbon::parse($date . ' ' . $time);
-                if ($slotDateTime->lt($currentTime)) {
+                $slotTime = Carbon::parse($todayStr . ' ' . $time);
+                if ($slotTime->lt($currentTime)) {
                     $isAvailable = false;
                 }
             }
@@ -121,12 +122,11 @@ class BookingService
     {
         $bookingDate = Carbon::parse($date);
         $isWeekend = $bookingDate->isWeekend();
-        $basePrice = $court->price_per_hour;
-
-        if ($isWeekend && $court->price_weekend > 0) {
-            $basePrice = $court->price_weekend;
-        } elseif (!$isWeekend && $court->price_weekday > 0) {
-            $basePrice = $court->price_weekday;
+        
+        if ($isWeekend) {
+            $basePrice = $court->price_weekend ?: $court->price_weekday ?: $court->price_per_hour;
+        } else {
+            $basePrice = $court->price_weekday ?: $court->price_weekend ?: $court->price_per_hour;
         }
 
         $originalPrice = $basePrice * $duration;

@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        view()->composer('*', function ($view) {
+            $landingContent = \App\Models\LandingPageContent::first() ?? new \App\Models\LandingPageContent();
+            $view->with('landingContent', $landingContent);
+        });
     }
 }

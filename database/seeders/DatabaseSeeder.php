@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,20 +16,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::updateOrCreate(
+            ['email' => 'admin@padel.com'],
+            [
+                'name' => 'Admin Padel',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_ADMIN,
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Admin Padel',
-            'email' => 'admin@padel.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => User::ROLE_ADMIN,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'customer@padel.com'],
+            [
+                'name' => 'Customer Padel',
+                'password' => Hash::make('password'),
+                'role' => User::ROLE_CUSTOMER,
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Customer Padel',
-            'email' => 'customer@padel.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-            'role' => User::ROLE_CUSTOMER,
+        $this->call([
+            MembershipTierSeeder::class,
+            CourtSeeder::class,
+            LandingPageSeeder::class,
         ]);
     }
 }

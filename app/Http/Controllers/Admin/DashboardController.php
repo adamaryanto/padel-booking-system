@@ -46,7 +46,10 @@ class DashboardController extends Controller
         $latestBookings = Booking::with(['user', 'court'])->latest()->take(10)->get();
 
         // Monthly stats for chart
-        $monthlyBookings = Booking::selectRaw('COUNT(*) as count, MONTH(created_at) as month')
+        $isSqlite = \DB::connection()->getDriverName() === 'sqlite';
+        $monthExpr = $isSqlite ? "CAST(strftime('%m', created_at) AS INTEGER)" : "MONTH(created_at)";
+        
+        $monthlyBookings = Booking::selectRaw("COUNT(*) as count, $monthExpr as month")
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->orderBy('month')

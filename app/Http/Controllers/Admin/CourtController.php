@@ -25,20 +25,38 @@ class CourtController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price_per_hour' => 'required|numeric|min:0',
-            'price_weekday' => 'nullable|numeric|min:0',
-            'price_weekend' => 'nullable|numeric|min:0',
+            'price_per_hour' => 'nullable|numeric|min:0',
+            'price_weekday' => 'required|numeric|min:0',
+            'price_weekend' => 'required|numeric|min:0',
             'open_time' => 'nullable',
             'close_time' => 'nullable',
             'member_promo' => 'nullable|string',
             'description' => 'nullable|string',
             'facilities' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'court_type' => 'nullable|in:Indoor,Outdoor',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'additional_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_photo_1' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_photo_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_photo_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'nullable|in:0,1',
         ]);
 
-        $data = $request->except(['photo', 'additional_photos']);
+        $data = $request->except([
+            'photo', 
+            'additional_photo_1', 'additional_photo_2', 'additional_photo_3',
+            'location', 'court_type'
+        ]);
+
+        // Integrate Court Type into facilities
+        if ($request->filled('court_type')) {
+            $data['facilities'] = $request->court_type . ' Court, ' . ($request->facilities ?? '');
+        }
+
+        // Integrate Location into description
+        if ($request->filled('location')) {
+            $data['description'] = 'Lokasi: ' . $request->location . '. ' . ($request->description ?? '');
+        }
         
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('courts', 'public');
@@ -46,9 +64,9 @@ class CourtController extends Controller
 
         $court = Court::create($data);
 
-        if ($request->hasFile('additional_photos')) {
-            foreach ($request->file('additional_photos') as $photo) {
-                $path = $photo->store('courts/additional', 'public');
+        for ($i = 1; $i <= 3; $i++) {
+            if ($request->hasFile("additional_photo_{$i}")) {
+                $path = $request->file("additional_photo_{$i}")->store('courts/additional', 'public');
                 $court->images()->create(['path' => $path]);
             }
         }
@@ -66,21 +84,43 @@ class CourtController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price_per_hour' => 'required|numeric|min:0',
-            'price_weekday' => 'nullable|numeric|min:0',
-            'price_weekend' => 'nullable|numeric|min:0',
+            'price_per_hour' => 'nullable|numeric|min:0',
+            'price_weekday' => 'required|numeric|min:0',
+            'price_weekend' => 'required|numeric|min:0',
             'open_time' => 'nullable',
             'close_time' => 'nullable',
             'member_promo' => 'nullable|string',
             'description' => 'nullable|string',
             'facilities' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+            'court_type' => 'nullable|in:Indoor,Outdoor',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'additional_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'remove_images.*' => 'nullable|exists:court_images,id',
+            'additional_photo_1' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_photo_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_photo_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'is_active' => 'nullable|in:0,1',
         ]);
 
-        $data = $request->except(['photo', 'additional_photos', 'remove_images']);
+        $data = $request->except([
+            'photo', 
+            'additional_photo_1', 'additional_photo_2', 'additional_photo_3',
+            'remove_additional_photo_1', 'remove_additional_photo_2', 'remove_additional_photo_3',
+            'location', 'court_type'
+        ]);
+
+        // Integrate Court Type into facilities
+        if ($request->filled('court_type')) {
+            // Remove previous Indoor/Outdoor Court mentions in facilities
+            $cleanedFacilities = preg_replace('/(Indoor|Outdoor)\s+Court,\s*/i', '', $court->facilities ?? '');
+            $data['facilities'] = $request->court_type . ' Court, ' . ($request->facilities ?? $cleanedFacilities);
+        }
+
+        // Integrate Location into description
+        if ($request->filled('location')) {
+            // Remove previous Lokasi mentions in description
+            $cleanedDesc = preg_replace('/Lokasi:\s*[^.]+\.\s*/i', '', $court->description ?? '');
+            $data['description'] = 'Lokasi: ' . $request->location . '. ' . ($request->description ?? $cleanedDesc);
+        }
 
         if ($request->hasFile('photo')) {
             if ($court->photo) {
@@ -91,18 +131,30 @@ class CourtController extends Controller
 
         $court->update($data);
 
-        if ($request->has('remove_images')) {
-            $imagesToRemove = CourtImage::whereIn('id', $request->remove_images)->where('court_id', $court->id)->get();
-            foreach ($imagesToRemove as $image) {
-                Storage::disk('public')->delete($image->path);
-                $image->delete();
-            }
-        }
+        $existingImages = $court->images()->get();
 
-        if ($request->hasFile('additional_photos')) {
-            foreach ($request->file('additional_photos') as $photo) {
-                $path = $photo->store('courts/additional', 'public');
-                $court->images()->create(['path' => $path]);
+        for ($i = 1; $i <= 3; $i++) {
+            $removeVal = $request->input("remove_additional_photo_{$i}");
+            $imgModel = $existingImages->get($i - 1);
+
+            if ($removeVal && $removeVal != '0' && $removeVal != '1') {
+                $imageToRemove = CourtImage::where('id', $removeVal)->where('court_id', $court->id)->first();
+                if ($imageToRemove) {
+                    Storage::disk('public')->delete($imageToRemove->path);
+                    $imageToRemove->delete();
+                }
+                $imgModel = null;
+            }
+
+            if ($request->hasFile("additional_photo_{$i}")) {
+                $path = $request->file("additional_photo_{$i}")->store('courts/additional', 'public');
+
+                if ($imgModel) {
+                    Storage::disk('public')->delete($imgModel->path);
+                    $imgModel->update(['path' => $path]);
+                } else {
+                    $court->images()->create(['path' => $path]);
+                }
             }
         }
 

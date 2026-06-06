@@ -81,7 +81,11 @@
                         @endforeach
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-neon mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                            <span class="text-gray-300 text-sm font-medium">Diskon {{ $tier->discount_percentage }}% setiap booking</span>
+                            <span class="text-gray-300 text-sm font-medium">Diskon Weekday: {{ $tier->discount_weekday }}%</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-neon mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300 text-sm font-medium">Diskon Weekend: {{ $tier->discount_weekend }}%</span>
                         </li>
                     </ul>
                 </div>
@@ -105,8 +109,15 @@
                         </button>
                     </template>
                     <template x-if="isActive && currentTierId != '{{ $tier->id }}'">
-                        <button class="w-full bg-white/5 text-white/30 py-4 rounded-2xl font-black uppercase tracking-tighter border border-white/10 cursor-not-allowed text-sm" disabled>
-                            Paket Terkunci
+                        <button @click="subscribe('{{ $tier->id }}')" 
+                                :disabled="isChecking"
+                                :class="isChecking ? 'opacity-50 cursor-not-allowed' : ''"
+                                class="w-full bg-white text-dark py-4 rounded-2xl font-black uppercase tracking-tighter hover:bg-neon transition shadow-lg text-sm flex items-center justify-center gap-2">
+                            <span x-show="!isChecking">Upgrade Sekarang</span>
+                            <span x-show="isChecking" class="flex items-center gap-2">
+                                <svg class="animate-spin h-4 w-4 text-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Memproses...
+                            </span>
                         </button>
                     </template>
                 </div>
@@ -124,7 +135,7 @@
                 isActive: {{ $activeMembership ? 'true' : 'false' }},
                 tierName: '{{ $activeMembership ? $activeMembership->tier->name : "" }}',
                 endDate: '{{ $activeMembership ? $activeMembership->end_date->format("d M Y") : "" }}',
-                discount: {{ $activeMembership ? $activeMembership->tier->discount_percentage : 0 }},
+                discount: {{ $activeMembership ? (($activeMembership->tier->discount_weekday ?? 0) + ($activeMembership->tier->discount_weekend ?? 0)) : 0 }},
                 receiptUrl: '{{ $activeMembership ? route("memberships.receipt", $activeMembership) : "#" }}',
                 currentTierId: '{{ $activeMembership ? $activeMembership->membership_tier_id : "" }}',
                 isChecking: {{ $hasPendingMembership ? 'true' : 'false' }},

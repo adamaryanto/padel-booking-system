@@ -15,6 +15,16 @@ Route::get('/', [CustomerBooking::class, 'index'])->name('welcome');
 Route::get('/api/availability', [CustomerBooking::class, 'checkAvailability'])->name('api.availability');
 Route::post('/midtrans/callback', [MidtransController::class, 'handleNotification'])->name('midtrans.callback');
 
+// Storage Link helper for cPanel hosting (publicly accessible before login)
+Route::get('/storage-link', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return response('Storage link created successfully!<br><br><a href="' . url('/') . '" style="padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-family: sans-serif; font-size: 14px;">Kembali ke Beranda</a>');
+    } catch (\Exception $e) {
+        return response('Failed to create storage link: ' . $e->getMessage() . '<br><br><a href="' . url('/') . '" style="padding: 8px 16px; background: #ef4444; color: white; text-decoration: none; border-radius: 6px; font-family: sans-serif; font-size: 14px;">Kembali ke Beranda</a>');
+    }
+})->name('storage.link');
+
 Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
     Route::get('/my-bookings', [CustomerBooking::class, 'dashboard'])->name('dashboard');
     
@@ -39,13 +49,18 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('/bookings', [AdminBooking::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{booking}/approve', [AdminBooking::class, 'approve'])->name('bookings.approve');
     Route::post('/bookings/{booking}/cancel', [AdminBooking::class, 'cancel'])->name('bookings.cancel');
+    Route::post('/bookings/{booking}/complete', [AdminBooking::class, 'complete'])->name('bookings.complete');
     
     Route::post('/payments/{payment}/verify', [AdminBooking::class, 'verifyPayment'])->name('payments.verify');
     Route::post('/payments/{payment}/reject', [AdminBooking::class, 'rejectPayment'])->name('payments.reject');
     
+    Route::resource('faqs', \App\Http\Controllers\Admin\FaqController::class);
+    
     // Landing Page Management
     Route::get('/landing', [AdminLandingPage::class, 'index'])->name('landing.edit');
     Route::put('/landing', [AdminLandingPage::class, 'update'])->name('landing.update');
+    Route::post('/landing/publish', [AdminLandingPage::class, 'publish'])->name('landing.publish');
+    Route::post('/landing/rollback', [AdminLandingPage::class, 'rollback'])->name('landing.rollback');
 });
 
 Route::middleware('auth')->group(function () {

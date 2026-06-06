@@ -130,7 +130,7 @@
             </div>
 
             <!-- Booking Form -->
-            <div class="md:w-1/3">
+            <div class="md:w-1/3" x-data="slotPreview()">
                 <div class="bg-dark-card rounded-[2rem] border border-white/5 p-8 shadow-2xl sticky top-24">
                     <h3 class="text-white font-black italic text-2xl uppercase tracking-tighter mb-8 font-heading">PESAN <span class="text-neon">SLOT</span></h3>
                     
@@ -141,9 +141,9 @@
                     @endif
 
                     <!-- Slot Preview (Read-only) -->
-                    <div x-data="slotPreview()" class="mb-10 bg-dark rounded-[2.5rem] p-6 border border-white/5">
+                    <div class="mb-10 bg-dark rounded-[2.5rem] p-6 border border-white/5">
                         <div class="flex justify-between items-center mb-6 px-2">
-                             <h5 class="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Status Terkini</h5>
+                             <h5 class="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Jadwal: <span class="text-neon" x-text="date"></span></h5>
                             <div class="flex space-x-3">
                                 <div class="flex items-center space-x-1.5">
                                     <div class="w-1.5 h-1.5 rounded-full bg-neon"></div>
@@ -177,7 +177,7 @@
                         
                         <div class="space-y-2">
                              <label class="block text-[10px] font-black text-white/40 uppercase tracking-widest ml-2">Pilih Tanggal</label>
-                            <input type="date" name="booking_date" id="booking_date" min="{{ date('Y-m-d') }}" max="{{ $maxDate }}" class="w-full bg-dark border-transparent rounded-2xl p-4 focus:ring-2 focus:ring-neon text-white font-bold uppercase tracking-tighter" value="{{ old('booking_date', date('Y-m-d')) }}" required>
+                            <input type="date" name="booking_date" id="booking_date" :value="date" @input="date = $event.target.value" min="{{ date('Y-m-d') }}" max="{{ $maxDate }}" class="w-full bg-dark border-transparent rounded-2xl p-4 focus:ring-2 focus:ring-neon text-white font-bold uppercase tracking-tighter" required>
                              @if(isset($allowedDays))
                              <p class="text-[8px] font-black text-white/20 uppercase tracking-widest mt-1 ml-2">
                                 <i class="fas fa-info-circle mr-1"></i> Maksimal {{ $allowedDays }} hari ke depan
@@ -201,17 +201,32 @@
                             </div>
                             <div class="space-y-2">
                                  <label class="block text-[10px] font-black text-white/40 uppercase tracking-widest ml-2">Durasi</label>
-                                <select name="duration" id="duration" class="w-full bg-dark border-transparent rounded-2xl p-4 focus:ring-2 focus:ring-neon text-white font-bold uppercase tracking-tighter custom-select" required>
-                                     <option value="1" {{ old('duration') == '1' ? 'selected' : '' }}>1 Jam</option>
-                                     <option value="2" {{ old('duration') == '2' ? 'selected' : '' }}>2 Jam</option>
-                                     <option value="3" {{ old('duration') == '3' ? 'selected' : '' }}>3 Jam</option>
+                                <select name="duration" id="duration" x-model="duration" @change="calculateTotal()" class="w-full bg-dark border-transparent rounded-2xl p-4 focus:ring-2 focus:ring-neon text-white font-bold uppercase tracking-tighter custom-select" required>
+                                     <option value="1">1 Jam</option>
+                                     <option value="2">2 Jam</option>
+                                     <option value="3">3 Jam</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="p-6 rounded-2xl bg-white/5 border border-white/5 flex justify-between items-center mt-8">
-                             <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Total Biaya</span>
-                            <h4 class="text-2xl font-black text-neon italic tracking-tighter m-0" id="display-total">Rp {{ number_format($court->price_per_hour, 0, ',', '.') }}</h4>
+                        <!-- Rincian Biaya -->
+                        <div class="mt-8 pt-8 border-t border-white/5 space-y-4">
+                            <div class="flex justify-between items-center px-2">
+                                <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Harga Lapangan (<span x-text="duration"></span> Jam)</span>
+                                <span class="text-sm text-white font-black italic" id="display-base">Rp 0</span>
+                            </div>
+                            
+                            <template x-if="discountAmount > 0">
+                                <div class="flex justify-between items-center px-2">
+                                    <span class="text-[10px] font-black text-neon uppercase tracking-widest italic">Potongan Membership</span>
+                                    <span class="text-sm text-neon font-black italic" id="display-discount">- Rp 0</span>
+                                </div>
+                            </template>
+
+                            <div class="p-6 rounded-2xl bg-white/5 border border-white/5 flex justify-between items-center mt-6">
+                                <span class="text-[10px] font-black text-white/40 uppercase tracking-widest">Total Bayar</span>
+                                <h4 class="text-2xl font-black text-neon italic tracking-tighter m-0" id="display-total">Rp 0</h4>
+                            </div>
                         </div>
 
                         <button type="submit" id="submitBookingBtn" class="w-full bg-neon text-dark py-5 rounded-2xl font-black uppercase tracking-tighter text-xl hover:bg-white transition shadow-2xl active:scale-95 transform">
@@ -255,13 +270,23 @@
             isLoading: false,
             courtId: '{{ $court->id }}',
             date: '{{ date('Y-m-d') }}',
+            duration: 1,
+            priceWeekday: {{ $court->price_weekday ?: $court->price_per_hour ?: 0 }},
+            priceWeekend: {{ $court->price_weekend ?: $court->price_per_hour ?: 0 }},
+            discountPercentWeekday: {{ $discountWeekday ?? 0 }},
+            discountPercentWeekend: {{ $discountWeekend ?? 0 }},
+            baseTotal: 0,
+            discountAmount: 0,
+            totalPrice: 0,
+            isWeekend: false,
+            
             init() {
+                this.$watch('date', () => this.updateSlots());
+                this.$watch('duration', () => this.calculateTotal());
                 this.updateSlots();
-                $('#booking_date').on('change', (e) => {
-                    this.date = e.target.value;
-                    this.updateSlots();
-                });
+                this.calculateTotal();
             },
+            
             updateSlots() {
                 this.isLoading = true;
                 fetch(`/api/availability?court_id=${this.courtId}&date=${this.date}`)
@@ -270,6 +295,27 @@
                         this.slots = data;
                         this.isLoading = false;
                     });
+                this.calculateTotal();
+            },
+            
+            calculateTotal() {
+                const dateObj = new Date(this.date);
+                const day = dateObj.getDay();
+                this.isWeekend = (day === 0 || day === 6);
+                
+                const unitPrice = this.isWeekend ? this.priceWeekend : this.priceWeekday;
+                const discountPercent = this.isWeekend ? this.discountPercentWeekend : this.discountPercentWeekday;
+                
+                this.baseTotal = unitPrice * this.duration;
+                this.discountAmount = (this.baseTotal * discountPercent) / 100;
+                this.totalPrice = this.baseTotal - this.discountAmount;
+                
+                // Formatter
+                const fmt = new Intl.NumberFormat('id-ID');
+                
+                if (document.getElementById('display-base')) document.getElementById('display-base').innerText = 'Rp ' + fmt.format(this.baseTotal);
+                if (document.getElementById('display-discount')) document.getElementById('display-discount').innerText = '- Rp ' + fmt.format(this.discountAmount);
+                if (document.getElementById('display-total')) document.getElementById('display-total').innerText = 'Rp ' + fmt.format(this.totalPrice);
             }
         }
     }
@@ -295,22 +341,20 @@
             const day = date.getDay(); // 0 is Sunday, 6 is Saturday
             const isWeekend = (day === 0 || day === 6);
             
-            let currentPrice = priceDefault;
-            if (isWeekend && priceWeekend > 0) {
-                currentPrice = priceWeekend;
-            } else if (!isWeekend && priceWeekday > 0) {
-                currentPrice = priceWeekday;
+            let currentPrice = 0;
+            if (isWeekend) {
+                currentPrice = priceWeekend || priceWeekday || priceDefault;
+            } else {
+                currentPrice = priceWeekday || priceWeekend || priceDefault;
             }
             
             const total = currentPrice * $durationSelect.val();
             $displayTotal.text('Rp ' + new Intl.NumberFormat('id-ID').format(total));
         }
 
-        $durationSelect.on('change', calculateTotal);
-        $bookingDate.on('change', calculateTotal);
-        
         // Initial calculation
-        calculateTotal();
+                // calculateTotal(); // Removed - handled by Alpine
+
 
         $bookingForm.on('submit', async function(e) {
             e.preventDefault();

@@ -23,6 +23,12 @@ class BookingController extends Controller
         return back()->with('success', 'Booking berhasil disetujui.');
     }
 
+    public function complete(Booking $booking)
+    {
+        $booking->update(['status' => 'completed']);
+        return back()->with('success', 'Booking berhasil ditandai selesai.');
+    }
+
     public function cancel(Booking $booking)
     {
         $booking->update(['status' => 'cancelled']);

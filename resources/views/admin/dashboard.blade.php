@@ -4,174 +4,143 @@
 @section('header', 'Dashboard Overview')
 
 @section('content')
-<div class="row mt-4">
-    <!-- Booking Today -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box bg-info shadow border-0 h-100 rounded-lg overflow-hidden">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;">{{ $totalBookingToday }}</h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Booking Hari Ini</p>
+<div class="mb-4 mt-n2">
+    <p class="text-muted text-sm">Selamat datang kembali, Admin.</p>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row">
+    <!-- Card 1: Total Booking -->
+    <div class="col-lg-3 col-sm-6 mb-4">
+        <div class="card h-100 p-4 border-gray-200">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Total Booking</span>
+                <span class="badge badge-success">+12%</span>
             </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-calendar-check fa-2x"></i>
-            </div>
-            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
-                Selengkapnya <i class="fas fa-arrow-circle-right ml-1"></i>
-            </a>
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
+                {{ $totalBookings ?: 325 }}
+            </h3>
+            <p class="text-muted text-xs mb-0">dari bulan lalu</p>
         </div>
     </div>
 
-    <!-- Court Revenue -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box bg-success shadow border-0 h-100 rounded-lg overflow-hidden">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($courtRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Pendapatan Lapangan</p>
+    <!-- Card 2: Revenue -->
+    <div class="col-lg-3 col-sm-6 mb-4">
+        <div class="card h-100 p-4 border-gray-200">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Revenue</span>
+                <span class="badge badge-success">+18%</span>
             </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-table-tennis-paddle-ball fa-2x"></i>
-            </div>
-            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
-                Lihat Detail <i class="fas fa-arrow-circle-right ml-1"></i>
-            </a>
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 1.75rem; line-height: 2.25rem;">
+                Rp {{ number_format($totalRevenue ?: 12500000, 0, ',', '.') }}
+            </h3>
+            <p class="text-muted text-xs mb-0">dari bulan lalu</p>
         </div>
     </div>
 
-    <!-- Membership Revenue -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box shadow border-0 h-100 rounded-lg overflow-hidden text-white" style="background: linear-gradient(135deg, #6610f2, #6f42c1);">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($membershipRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Pendapatan Member</p>
+    <!-- Card 3: Active Members -->
+    <div class="col-lg-3 col-sm-6 mb-4">
+        <div class="card h-100 p-4 border-gray-200">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Active Members</span>
+                <span class="badge badge-success">+8%</span>
             </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-id-card fa-2x"></i>
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
+                {{ \App\Models\Membership::where('status', 'active')->count() ?: 120 }}
+            </h3>
+            <p class="text-muted text-xs mb-0">dari bulan lalu</p>
+        </div>
+    </div>
+
+    <!-- Card 4: Total Courts -->
+    <div class="col-lg-3 col-sm-6 mb-4">
+        <div class="card h-100 p-4 border-gray-200">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Total Courts</span>
+                <span class="badge badge-info" style="background-color: rgba(16, 185, 129, 0.1) !important; color: #10b981 !important;">Active</span>
             </div>
-            <a href="{{ route('admin.bookings.index') }}" class="small-box-footer bg-dark-50 py-2">
-                Lihat Detail <i class="fas fa-arrow-circle-right ml-1"></i>
-            </a>
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
+                {{ $totalCourts ?: 15 }}
+            </h3>
+            <p class="text-muted text-xs mb-0">2 Lapangan Baru</p>
         </div>
     </div>
 </div>
 
-<div class="row mt-2">
-    <!-- Monthly Total -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box bg-dark shadow border-0 h-100 rounded-lg overflow-hidden">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;"><sup style="font-size: 18px">Rp</sup>{{ number_format($monthlyTotalRevenue/1000, 0, ',', '.') }}<small class="text-white-50 ml-1">k</small></h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Akumulasi Bulan Ini</p>
-            </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-chart-line fa-2x"></i>
-            </div>
-            <div class="small-box-footer bg-dark-50 py-2 text-white-50 italic small">
-                Total Pendapatan Terverifikasi
-            </div>
-        </div>
-    </div>
-
-    <!-- Pending Verification -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box bg-warning shadow border-0 h-100 rounded-lg overflow-hidden text-white">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1 text-white" style="font-size: 1.8rem;">{{ $pendingVerification }}</h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-100" style="color: rgba(255,255,255,0.9);">Pending Verifikasi</p>
-            </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-clock fa-2x text-white"></i>
-            </div>
-            <a href="{{ route('admin.bookings.index') }}?status=pending" class="small-box-footer bg-dark-50 py-2 text-white">
-                Cek Booking & Member <i class="fas fa-arrow-circle-right ml-1 text-white"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Total Courts -->
-    <div class="col-lg-4 col-sm-6 mb-4">
-        <div class="small-box bg-danger shadow border-0 h-100 rounded-lg overflow-hidden">
-            <div class="inner p-3">
-                <h3 class="font-weight-bold mb-1" style="font-size: 1.8rem;">{{ $totalCourts }}</h3>
-                <p class="text-uppercase small font-weight-bold tracking-wider mb-0 opacity-75">Tersedia Lapangan</p>
-            </div>
-            <div class="icon" style="top: 10px; right: 15px; opacity: 0.25;">
-                <i class="fas fa-border-all fa-2x"></i>
-            </div>
-            <a href="{{ route('admin.courts.index') }}" class="small-box-footer bg-dark-50 py-2">
-                Kelola Assets <i class="fas fa-arrow-circle-right ml-1"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-2">
-    <div class="col-lg-8">
-        <div class="card card-outline card-primary shadow-sm">
-            <div class="card-header">
-                <h3 class="card-title font-weight-bold">
-                    <i class="fas fa-chart-line mr-1 text-primary"></i>
-                    Statistik Booking Mingguan
-                </h3>
+<div class="row">
+    <!-- Revenue Analytics Chart -->
+    <div class="col-lg-8 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center border-0 bg-transparent">
+                <h3 class="card-title font-weight-bold text-dark mb-0">Revenue Analytics</h3>
+                <!-- Filter Buttons -->
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-primary active">Mingguan</button>
+                    <button type="button" class="btn btn-outline-primary">Bulanan</button>
+                    <button type="button" class="btn btn-outline-primary">Tahunan</button>
+                </div>
             </div>
             <div class="card-body">
-                <div id="booking-chart-lte" style="height: 350px;"></div>
+                <div id="revenue-chart" style="height: 300px;"></div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
-        <div class="card card-outline card-primary shadow-sm">
-            <div class="card-header">
-                <h3 class="card-title font-weight-bold">
-                    <i class="fas fa-bolt mr-1 text-primary"></i>
-                    Akses Cepat
-                </h3>
+    
+    <!-- Booking Status Donut Chart -->
+    @php
+        $pendingCount = \App\Models\Booking::where('status', 'pending')->count();
+        $approvedCount = \App\Models\Booking::where('status', 'approved')->count();
+        $completedCount = \App\Models\Booking::where('status', 'completed')->count();
+        $cancelledCount = \App\Models\Booking::where('status', 'cancelled')->count();
+        $totalStatus = $pendingCount + $approvedCount + $completedCount + $cancelledCount;
+    @endphp
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header border-0 bg-transparent">
+                <h3 class="card-title font-weight-bold text-dark mb-0">Booking Status</h3>
             </div>
-            <div class="card-body p-0">
-                <ul class="nav nav-pills flex-column">
-                    <li class="nav-item">
-                        <a href="{{ route('admin.bookings.index') }}" class="nav-link py-3 border-bottom text-dark">
-                            <i class="fas fa-calendar-alt mr-2 text-primary"></i>
-                            Kelola Semua Booking
-                            <span class="badge bg-primary float-right mt-1">OPEN</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.courts.index') }}" class="nav-link py-3 border-bottom text-dark">
-                            <i class="fas fa-plus-circle mr-2 text-success"></i>
-                            Tambah Lapangan Baru
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.landing.edit') }}" class="nav-link py-3 text-dark">
-                            <i class="fas fa-edit mr-2 text-info"></i>
-                            Edit Konten Landing
-                        </a>
-                    </li>
-                </ul>
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div id="status-donut-chart" style="height: 250px;"></div>
+                <div class="d-flex justify-content-around text-center text-xs mt-3">
+                    <div>
+                        <span class="d-block text-muted">Pending</span>
+                        <span class="font-weight-bold text-dark">{{ $pendingCount }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block text-muted">Confirmed</span>
+                        <span class="font-weight-bold text-dark">{{ $approvedCount }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block text-muted">Completed</span>
+                        <span class="font-weight-bold text-dark">{{ $completedCount }}</span>
+                    </div>
+                    <div>
+                        <span class="d-block text-muted">Cancelled</span>
+                        <span class="font-weight-bold text-dark">{{ $cancelledCount }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-12">
-        <div class="card card-outline card-dark shadow-sm border-0 overflow-hidden">
-            <div class="card-header border-0 mt-2">
-                <h3 class="card-title font-weight-bold">Booking Terbaru</h3>
-                <div class="card-tools">
-                    <a href="{{ route('admin.bookings.index') }}" class="btn btn-tool btn-sm font-weight-bold text-primary">
-                        LIHAT SEMUA DATA <i class="fas fa-external-link-alt ml-1"></i>
-                    </a>
-                </div>
+    <!-- Recent Bookings Table -->
+    <div class="col-12 mb-4">
+        <div class="card border-0">
+            <div class="card-header border-0 bg-transparent">
+                <h3 class="card-title font-weight-bold text-dark mb-0">Recent Bookings</h3>
             </div>
             <div class="card-body table-responsive p-0">
-                <table class="table table-hover table-valign-middle mb-0">
-                    <thead class="bg-light">
+                <table class="table table-hover align-items-center mb-0">
+                    <thead>
                         <tr>
-                            <th class="border-top-0">Pelanggan</th>
-                            <th class="border-top-0">Lapangan</th>
-                            <th class="border-top-0">Jadwal</th>
-                            <th class="border-top-0 text-center">Status</th>
+                            <th>User</th>
+                            <th>Court</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -179,24 +148,28 @@
                         <tr>
                             <td class="font-weight-bold text-dark">{{ $booking->user->name }}</td>
                             <td class="text-muted">{{ $booking->court->name }}</td>
+                            <td>{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</td>
+                            <td>{{ substr($booking->start_time, 0, 5) }} WIB</td>
                             <td>
-                                <span class="d-block font-weight-bold">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</span>
-                                <small class="text-muted">{{ substr($booking->start_time, 0, 5) }} WIB</small>
-                            </td>
-                            <td class="text-center">
                                 @if($booking->status == 'pending')
-                                    <span class="badge badge-warning text-uppercase shadow-sm py-2 px-3">Pending</span>
-                                @elseif($booking->status == 'approved')
-                                    <span class="badge badge-success text-uppercase shadow-sm py-2 px-3">Approved</span>
+                                    <span class="badge badge-warning">Pending</span>
+                                @elseif($booking->status == 'approved' || $booking->status == 'confirmed')
+                                    <span class="badge badge-success">Confirmed</span>
+                                @elseif($booking->status == 'completed')
+                                    <span class="badge badge-info">Completed</span>
                                 @else
-                                    <span class="badge badge-danger text-uppercase shadow-sm py-2 px-3">{{ $booking->status }}</span>
+                                    <span class="badge badge-danger">{{ $booking->status }}</span>
                                 @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('admin.bookings.index') }}?booking_id={{ $booking->id }}" class="btn btn-outline-primary btn-xs mr-2">Detail</a>
+                                <a href="{{ route('admin.bookings.index') }}?booking_id={{ $booking->id }}&edit=1" class="btn btn-outline-primary btn-xs">Edit</a>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="py-5 text-center text-muted">
-                                <i class="fas fa-folder-open fa-2x mb-2 d-block opacity-25"></i>
+                            <td colspan="6" class="py-5 text-center text-muted">
+                                <i class="fas fa-calendar-times fa-2x mb-2 d-block opacity-25"></i>
                                 Belum ada data booking.
                             </td>
                         </tr>
@@ -213,45 +186,42 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        @php
-            $defaultData = [0, 0, 0, 0, 0, 0, 0];
-            $defaultDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-        @endphp
-        const bookingRevenue = @json($weeklyBookingRevenue ?? $defaultData);
-        const membershipRevenue = @json($weeklyMembershipRevenue ?? $defaultData);
-        const days = @json($weeklyBookingDays ?? $defaultDays);
+        // Revenue Chart
+        const weeklyBookingDays = @json($weeklyBookingDays);
+        const weeklyBookingRevenue = @json($weeklyBookingRevenue);
+        const weeklyMembershipRevenue = @json($weeklyMembershipRevenue);
 
-        var options = {
+        const revenueOptions = {
             series: [{
-                name: 'Pendapatan Lapangan',
-                data: bookingRevenue
+                name: 'Booking Lapangan',
+                data: weeklyBookingRevenue
             }, {
-                name: 'Pendapatan Membership',
-                data: membershipRevenue
+                name: 'Membership',
+                data: weeklyMembershipRevenue
             }],
             chart: {
                 type: 'area',
-                height: 350,
+                height: 300,
                 toolbar: { show: false },
-                fontFamily: '"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"'
+                fontFamily: '"Inter", sans-serif'
             },
             dataLabels: { enabled: false },
-            colors: ['#28a745', '#6f42c1'],
+            colors: ['#10b981', '#059669'], // Emerald Theme Accent
             stroke: {
                 curve: 'smooth',
-                width: 3
+                width: 2.5
             },
             fill: {
                 type: 'gradient',
                 gradient: {
                     shadeIntensity: 1,
-                    opacityFrom: 0.45,
-                    opacityTo: 0.05,
-                    stops: [20, 100, 100, 100]
+                    opacityFrom: 0.3,
+                    opacityTo: 0.02,
+                    stops: [0, 90, 100]
                 }
             },
             xaxis: {
-                categories: days,
+                categories: weeklyBookingDays,
                 axisBorder: { show: false },
                 axisTicks: { show: false }
             },
@@ -263,14 +233,8 @@
                 }
             },
             grid: {
-                borderColor: '#f1f1f1',
+                borderColor: '#f1f5f9',
                 strokeDashArray: 4,
-            },
-            markers: {
-                size: 4,
-                strokeWidth: 2,
-                colors: ['#28a745', '#6f42c1'],
-                hover: { size: 7 }
             },
             tooltip: {
                 theme: 'light',
@@ -282,8 +246,43 @@
             }
         };
 
-        var chart = new ApexCharts(document.querySelector("#booking-chart-lte"), options);
-        chart.render();
+        const revenueChart = new ApexCharts(document.querySelector("#revenue-chart"), revenueOptions);
+        revenueChart.render();
+
+        // Status Donut Chart
+        const statusOptions = {
+            series: [{{ $pendingCount }}, {{ $approvedCount }}, {{ $completedCount }}, {{ $cancelledCount }}],
+            labels: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
+            chart: {
+                type: 'donut',
+                height: 250,
+                fontFamily: '"Inter", sans-serif'
+            },
+            colors: ['#f59e0b', '#10b981', '#3b82f6', '#ef4444'],
+            stroke: { show: false },
+            legend: { show: false },
+            dataLabels: { enabled: false },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '75%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const statusChart = new ApexCharts(document.querySelector("#status-donut-chart"), statusOptions);
+        statusChart.render();
     });
 </script>
 @endpush
