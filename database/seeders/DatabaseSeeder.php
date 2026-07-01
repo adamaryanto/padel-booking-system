@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             MembershipTierSeeder::class,
             CourtSeeder::class,
             LandingPageSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

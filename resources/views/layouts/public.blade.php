@@ -1,9 +1,24 @@
+@php
+    if (!isset($landingExtras) || empty($landingExtras)) {
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists('landing/extras.json')) {
+            $landingExtras = json_decode(\Illuminate\Support\Facades\Storage::disk('public')->get('landing/extras.json'), true);
+        } else {
+            $landingExtras = [];
+        }
+    }
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'PadelHub') }} - @yield('title', 'Sporty Dark Modern Booking')</title>
+        @if(!empty($landingExtras['setting_favicon']))
+            <link rel="icon" href="{{ url('storage/' . $landingExtras['setting_favicon']) }}">
+        @endif
+        @php
+            $tabTitle = !empty($landingExtras['setting_title']) ? $landingExtras['setting_title'] : (config('app.name', 'PadelHub') . ' - ' . ($__env->yieldContent('title') ?: 'Sporty Dark Modern Booking'));
+        @endphp
+        <title>{{ $tabTitle }}</title>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +26,6 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js" defer></script>
         <script>
             tailwind.config = {
                 theme: {
@@ -46,7 +60,11 @@
                     <!-- Logo Area -->
                     <div class="flex items-center">
                         <a href="/" class="text-2xl font-black text-white tracking-tighter hover:scale-105 transition-transform duration-300">
-                            PADEL<span class="text-neon">HUB</span>
+                            @if(!empty($landingExtras['setting_logo']))
+                                <img src="{{ url('storage/' . $landingExtras['setting_logo']) }}" alt="{{ $landingExtras['company_name'] ?? 'PadelHub' }} Logo" class="h-10 w-auto object-contain">
+                            @else
+                                PADEL<span class="text-neon">HUB</span>
+                            @endif
                         </a>
                     </div>
                     
@@ -155,13 +173,11 @@
         </main>
 
         <!-- Footer -->
+        @if(!Route::is('welcome'))
         <footer class="bg-dark-card border-t border-white/5 py-10 px-4 relative">
             <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
                 <div class="col-span-1 md:col-span-2">
                     <a href="/" class="text-3xl font-black text-white tracking-tighter mb-4 block font-heading">PADEL<span class="text-neon">HUB</span></a>
-                    <p class="mb-6 max-w-sm leading-relaxed text-gray-500 font-medium text-sm italic">
-                        Standar elit dalam manajemen lapangan padel.
-                    </p>
                     <div class="flex space-x-4">
                         <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-facebook-f text-lg"></i></a>
                         <a href="#" class="bg-white/5 p-3 rounded-xl text-white hover:text-neon hover:bg-white/10 transition border border-white/5"><i class="fab fa-instagram text-lg"></i></a>
@@ -205,6 +221,7 @@
                 <p>&copy; 2026 PadelHub Indonesia.</p>
             </div>
         </footer>
+        @endif
 
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">

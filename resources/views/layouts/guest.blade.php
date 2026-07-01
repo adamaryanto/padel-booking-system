@@ -1,5 +1,6 @@
+@props(['fixed' => false])
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $fixed ? 'h-screen overflow-hidden' : '' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -40,15 +41,15 @@
         }
     </style>
 </head>
-<body class="antialiased bg-dark text-gray-300 font-sans carbon-bg min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden py-12">
+<body class="antialiased bg-dark text-gray-300 font-sans carbon-bg {{ $fixed ? 'h-screen overflow-hidden' : 'min-h-screen py-12' }} flex items-center justify-center p-4 relative overflow-x-hidden">
     
     <!-- Decorative Glows -->
     <div class="absolute top-0 right-0 w-96 h-96 bg-neon/10 rounded-full blur-[100px] -mr-48 -mt-48 transition-all duration-1000"></div>
     <div class="absolute bottom-0 left-0 w-96 h-96 bg-neon/5 rounded-full blur-[100px] -ml-48 -mb-48 transition-all duration-1000"></div>
 
-    <div class="max-w-md w-full relative z-10">
+    <div class="max-w-md w-full relative z-10 flex flex-col justify-center">
         <!-- Logo Area -->
-        <div class="text-center mb-10">
+        <div class="text-center {{ $fixed ? 'mb-4 md:mb-6' : 'mb-10' }}">
             <a href="/" class="text-4xl font-black text-white tracking-tighter hover:scale-105 transition-transform duration-300 inline-block">
                 PADEL<span class="text-neon">HUB</span>
             </a>
@@ -56,11 +57,11 @@
         </div>
 
         <!-- Auth Card -->
-        <div class="bg-dark-card/50 backdrop-blur-xl border border-white/5 rounded-[2.5rem] shadow-2xl p-8 sm:p-10 glow-neon transition-all duration-500">
+        <div class="bg-dark-card/50 backdrop-blur-xl border border-white/5 rounded-[2.5rem] shadow-2xl {{ $fixed ? 'p-6 sm:p-8' : 'p-8 sm:p-10' }} glow-neon transition-all duration-500">
             {{ $slot }}
         </div>
 
-        <div class="text-center mt-12 text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
+        <div class="text-center {{ $fixed ? 'mt-6 md:mt-8' : 'mt-12' }} text-[10px] font-black uppercase tracking-[0.5em] text-white/20">
             &copy; {{ date('Y') }} PadelHub Indonesia. Driven by Excellence.
         </div>
     </div>

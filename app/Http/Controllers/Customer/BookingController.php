@@ -37,6 +37,7 @@ class BookingController extends Controller
 
         $courts = Court::where('is_active', true)->get();
         $faqs = \App\Models\Faq::orderBy('order')->get();
+        $membershipTiers = \App\Models\MembershipTier::where('is_active', true)->get();
         
         $landingContent = null;
         $landingExtras = [];
@@ -53,7 +54,7 @@ class BookingController extends Controller
             }
         }
         
-        return view('welcome', compact('courts', 'landingContent', 'faqs', 'landingExtras'));
+        return view('welcome', compact('courts', 'landingContent', 'faqs', 'landingExtras', 'membershipTiers'));
     }
 
     public function show(Court $court)
@@ -63,9 +64,8 @@ class BookingController extends Controller
         $maxDate = now()->addDays($allowedDays)->format('Y-m-d');
         
         $user = Auth::user();
-        $membership = $user ? $user->activeMembership() : null;
-        $discountWeekday = $membership ? $membership->tier->discount_weekday : 0;
-        $discountWeekend = $membership ? $membership->tier->discount_weekend : 0;
+        $discountWeekday = $user ? $this->bookingService->getActiveDiscountPercentage($user, false) : 0;
+        $discountWeekend = $user ? $this->bookingService->getActiveDiscountPercentage($user, true) : 0;
         
         return view('customer.courts.show', compact('court', 'landingContent', 'allowedDays', 'maxDate', 'discountWeekday', 'discountWeekend'));
     }
@@ -125,6 +125,7 @@ class BookingController extends Controller
     public function dashboard()
     {
         $this->paymentService->expireStalePayments();
+        $this->bookingService->completePastBookings();
         $user = Auth::user();
         $bookings = Booking::with(['court', 'payment'])
             ->where('user_id', $user->id)
@@ -176,8 +177,17 @@ class BookingController extends Controller
     {
         $this->authorizeAccess($booking);
 
-        $snapToken = $this->paymentService->getBookingSnapToken($booking, Auth::user());
+        // Expire stale bookings first and refresh the booking model
+        $this->paymentService->expireStalePayments();
+        $this->bookingService->completePastBookings();
+        $booking->refresh();
+
         $payment = $booking->payment;
+        if ($booking->status === 'pending') {
+            $this->paymentService->getBookingSnapToken($booking, Auth::user());
+            $payment = $booking->payment()->first();
+        }
+
         $landingContent = LandingPageContent::first() ?? new LandingPageContent();
 
         return view('customer.payments.create', compact('booking', 'payment', 'landingContent'));
@@ -228,6 +238,71 @@ class BookingController extends Controller
     public function paymentFinish()
     {
         return redirect()->route('dashboard');
+    }
+
+    public function reschedule(Request $request, Booking $booking)
+    {
+        $this->authorizeAccess($booking);
+
+        if ($booking->status !== 'approved') {
+            return back()->with('error', 'Pemesanan harus berstatus disetujui (approved) untuk di-reschedule.');
+        }
+
+        $request->validate([
+            'booking_date' => 'required|date|after_or_equal:today',
+            'start_time' => 'required',
+        ]);
+
+        $user = Auth::user();
+        $bookingDate = \Carbon\Carbon::parse($request->booking_date);
+        
+        // 1. Check booking window constraints
+        $allowedDays = $user->getAllowedBookingWindow();
+        
+        // Non-members: same day only
+        if (!$user->activeMembership()) {
+            if ($bookingDate->format('Y-m-d') !== $booking->booking_date) {
+                return back()->with('error', 'Sebagai non-member, Anda hanya dapat melakukan reschedule jadwal pada hari yang sama dengan pesanan awal.');
+            }
+        } else {
+            // Members: within booking window relative to today
+            $maxDate = now()->addDays($allowedDays)->endOfDay();
+            if ($bookingDate->gt($maxDate)) {
+                return back()->with('error', "Sebagai member, Anda hanya dapat memilih jadwal baru maksimal {$allowedDays} hari ke depan.");
+            }
+        }
+
+        // 2. Calculate duration of the original booking
+        $start = \Carbon\Carbon::parse($booking->start_time);
+        $end = \Carbon\Carbon::parse($booking->end_time);
+        
+        // Handle potential crossing-midnight edge cases
+        if ($end->lt($start)) {
+            $end->addDay();
+        }
+        
+        $durationMinutes = $start->diffInMinutes($end);
+        $newEndTime = \Carbon\Carbon::parse($request->start_time)->addMinutes($durationMinutes)->format('H:i');
+
+        // 3. Check if the new time range is available (excluding this booking itself)
+        if (!$this->bookingService->isTimeRangeAvailable(
+            $booking->court_id,
+            $request->booking_date,
+            $request->start_time,
+            $newEndTime,
+            $booking->id
+        )) {
+            return back()->with('error', 'Jadwal baru yang Anda pilih sudah terisi atau tidak tersedia. Silakan pilih waktu lain.');
+        }
+
+        // 4. Update the booking
+        $booking->update([
+            'booking_date' => $request->booking_date,
+            'start_time' => $request->start_time,
+            'end_time' => $newEndTime,
+        ]);
+
+        return back()->with('success', 'Jadwal booking berhasil di-reschedule.');
     }
 
     private function authorizeAccess($booking)

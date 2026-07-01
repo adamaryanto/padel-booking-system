@@ -9,7 +9,6 @@ class LandingPageContent extends Model
     protected $fillable = [
         'hero_title',
         'hero_subtitle',
-        'hero_image',
         'hero_cta_text',
         'hero_cta_link',
         'about_title',

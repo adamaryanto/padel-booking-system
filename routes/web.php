@@ -35,7 +35,7 @@ Route::get('/db-seed', function () {
     }
 })->name('db.seed');
 
-Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:customer', 'nocache'])->group(function () {
     Route::get('/my-bookings', [CustomerBooking::class, 'dashboard'])->name('dashboard');
     
     Route::get('/courts/{court}', [CustomerBooking::class, 'show'])->name('customer.courts.show');
@@ -49,9 +49,10 @@ Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
     Route::get('/membership', [CustomerMembership::class, 'index'])->name('membership.index');
     Route::post('/membership/subscribe/{tier}', [CustomerMembership::class, 'subscribe'])->name('membership.subscribe');
     Route::post('/membership/check-status', [CustomerMembership::class, 'checkStatus'])->name('membership.check-status');
+    Route::post('/bookings/{booking}/reschedule', [CustomerBooking::class, 'reschedule'])->name('customer.bookings.reschedule');
 });
 
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'nocache'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('courts', AdminCourt::class);
     Route::resource('membership-tiers', AdminMembershipTier::class);
@@ -82,3 +83,12 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Fallback route to serve storage files if public/storage symlink does not exist or fails on local Windows environment
+Route::get('/storage/{path}', function ($path) {
+    $filePath = storage_path('app/public/' . $path);
+    if (file_exists($filePath)) {
+        return response()->file($filePath);
+    }
+    abort(404);
+})->where('path', '.*');

@@ -46,7 +46,6 @@ class LandingPageController extends Controller
             'hero_subtitle' => 'nullable|string',
             'hero_cta_text' => 'nullable|string|max:255',
             'hero_cta_link' => 'nullable|string|max:255',
-            'hero_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'hero_bg_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'about_title' => 'nullable|string|max:255',
             'about_subtitle' => 'nullable|string|max:255',
@@ -55,6 +54,7 @@ class LandingPageController extends Controller
             'cta_bg_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
             'setting_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'setting_favicon' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:1024',
+            'setting_title' => 'nullable|string|max:255',
         ]);
 
         // Load existing draft or live data to merge images
@@ -87,13 +87,9 @@ class LandingPageController extends Controller
             'contact_phone' => $request->input('contact_phone'),
             'contact_email' => $request->input('contact_email'),
             'whatsapp_number' => $request->input('whatsapp_number'),
-            'hero_image' => $existingDbFields['hero_image'] ?? null,
             'about_image' => $existingDbFields['about_image'] ?? null,
         ];
 
-        if ($request->hasFile('hero_image')) {
-            $dbFields['hero_image'] = $request->file('hero_image')->store('landing', 'public');
-        }
         if ($request->hasFile('about_image')) {
             $dbFields['about_image'] = $request->file('about_image')->store('landing', 'public');
         }
@@ -132,6 +128,7 @@ class LandingPageController extends Controller
             'cta_bg_image' => $existingExtrasFields['cta_bg_image'] ?? null,
             'setting_logo' => $existingExtrasFields['setting_logo'] ?? null,
             'setting_favicon' => $existingExtrasFields['setting_favicon'] ?? null,
+            'setting_title' => $request->input('setting_title'),
         ];
 
         if ($request->hasFile('hero_bg_image')) {

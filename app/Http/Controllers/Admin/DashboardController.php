@@ -13,22 +13,28 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(\App\Services\BookingService $bookingService)
     {
+        $bookingService->completePastBookings();
+
         $totalBookings = Booking::count();
         $totalCustomers = User::where('role', 'customer')->count();
-        $totalRevenue = Booking::where('status', 'approved')->sum('total_price');
+        
+        $courtRevenue = Booking::whereIn('status', ['approved', 'completed'])->sum('total_price');
+        $membershipRevenue = Payment::whereNotNull('membership_id')
+            ->where('status', 'verified')
+            ->sum('gross_amount');
+            
+        $totalRevenue = $courtRevenue + $membershipRevenue;
         
         // Missing variables for dashboard boxes
         $totalBookingToday = Booking::whereDate('created_at', Carbon::today())->count();
-        
-        $courtRevenue = Booking::where('status', 'approved')->sum('total_price');
         
         $membershipRevenue = Payment::whereNotNull('membership_id')
             ->where('status', 'verified')
             ->sum('gross_amount');
             
-        $monthlyTotalRevenue = Booking::where('status', 'approved')
+        $monthlyTotalRevenue = Booking::whereIn('status', ['approved', 'completed'])
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->sum('total_price') + 
@@ -82,7 +88,7 @@ class DashboardController extends Controller
             $date = Carbon::now()->subDays($i);
             $weeklyBookingDays[] = $dayMap[$date->format('D')];
             
-            $weeklyBookingRevenue[] = Booking::where('status', 'approved')
+            $weeklyBookingRevenue[] = Booking::whereIn('status', ['approved', 'completed'])
                 ->whereDate('created_at', $date)
                 ->sum('total_price');
                 

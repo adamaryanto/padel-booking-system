@@ -10,8 +10,9 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function index()
+    public function index(\App\Services\BookingService $bookingService)
     {
+        $bookingService->completePastBookings();
         $bookings = Booking::with(['user', 'court', 'payment'])->latest()->get();
         $memberships = Membership::with(['user', 'tier', 'payment'])->latest()->get();
         return view('admin.bookings.index', compact('bookings', 'memberships'));
@@ -43,6 +44,13 @@ class BookingController extends Controller
             $payment->booking->update(['status' => 'approved']);
         } elseif ($payment->membership_id) {
             $membership = $payment->membership;
+            
+            // Expire any existing active memberships for this user
+            Membership::where('user_id', $membership->user_id)
+                ->where('id', '!=', $membership->id)
+                ->where('status', 'active')
+                ->update(['status' => 'expired']);
+
             $membership->update([
                 'status' => 'active',
                 'start_date' => now(),

@@ -16,7 +16,7 @@
         </span>
         <span class="text-xs text-muted font-weight-semibold mr-2">Update: {{ $lastUpdated }}</span>
         
-        <a href="{{ route('storage.link') }}" class="btn btn-xs btn-outline-primary py-1 px-2.5 rounded-lg font-weight-bold text-xxs d-inline-flex align-items-center" title="Hubungkan folder publik dengan folder penyimpanan agar gambar muncul di cPanel.">
+        <a href="{{ route('storage.link') }}" class="btn btn-xs btn-outline-primary py-1 px-2.5 rounded-lg font-weight-bold text-xxs d-inline-flex align-items-center header-link-btn" title="Hubungkan folder publik dengan folder penyimpanan agar gambar muncul di cPanel.">
             <i class="fas fa-link mr-1"></i> Generate Storage Link
         </a>
     </div>
@@ -70,34 +70,8 @@
                     
                     <!-- Images & Status -->
                     <div class="row">
-                        <!-- Hero Image -->
-                        <div class="col-md-6 form-group mb-4">
-                            <label class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">Hero Image Overlay</label>
-                            <div class="image-preview-upload-box rounded-2xl position-relative d-flex align-items-center justify-content-center overflow-hidden" 
-                                 style="height: 140px;"
-                                 onclick="document.getElementById('hero_image').click()">
-                                
-                                <input type="file" name="hero_image" id="hero_image" class="d-none image-upload-input" accept="image/*" data-preview-target="hero-preview-img" data-placeholder-target="hero-placeholder">
-                                
-                                <div id="hero-preview-img" class="w-100 h-100 {{ $content->hero_image ? '' : 'd-none' }}">
-                                    <img src="{{ $content->hero_image ? (str_starts_with($content->hero_image, 'http') ? $content->hero_image : url('storage/' . $content->hero_image)) : '' }}" 
-                                         class="w-100 h-100" style="object-fit: cover;">
-                                    <div class="upload-hover-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center text-white" 
-                                         style="top: 0; left: 0; opacity: 0; transition: opacity 0.2s;">
-                                        <span class="text-xs font-weight-bold"><i class="fas fa-edit mr-1"></i> Ubah Gambar</span>
-                                    </div>
-                                </div>
-                                
-                                <div id="hero-placeholder" class="text-center p-3 {{ $content->hero_image ? 'd-none' : '' }}">
-                                    <i class="fas fa-cloud-upload-alt text-muted fa-2x mb-2"></i>
-                                    <span class="d-block text-xs font-weight-bold text-dark">Klik untuk Upload Hero Image</span>
-                                    <span class="d-block text-xxs text-muted mt-1">Format: JPG, PNG, WebP (Max. 2MB)</span>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Background Image -->
-                        <div class="col-md-6 form-group mb-4">
+                        <div class="col-md-12 form-group mb-4">
                             <label class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">Hero Background Image</label>
                             <div class="image-preview-upload-box rounded-2xl position-relative d-flex align-items-center justify-content-center overflow-hidden" 
                                  style="height: 140px;"
@@ -120,6 +94,7 @@
                                     <span class="d-block text-xxs text-muted mt-1">Format: JPG, PNG, WebP (Max. 2MB)</span>
                                 </div>
                             </div>
+                            <small class="form-text text-muted mt-2"><i class="fas fa-info-circle mr-1"></i> Rekomendasi ukuran: 1920x1080 pixel (Landscape 16:9), Max. 2MB.</small>
                         </div>
                     </div>
 
@@ -163,7 +138,7 @@
 
             <!-- 3. FEATURES SECTION -->
             <div class="card border-gray-200 bg-white p-4 mb-4 shadow-sm" style="border-radius: 1.25rem !important;">
-                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center">
+                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center section-header-responsive">
                     <div>
                         <h5 class="font-weight-extrabold text-dark mb-1"><i class="fas fa-star mr-2 text-primary"></i> Features Section Editor</h5>
                         <p class="text-muted text-xs mb-0">Kelola dan urutkan daftar fitur unggulan PadelHub.</p>
@@ -181,7 +156,7 @@
 
             <!-- 4. POPULAR COURTS SECTION -->
             <div class="card border-gray-200 bg-white p-4 mb-4 shadow-sm" style="border-radius: 1.25rem !important;">
-                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center">
+                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center section-header-responsive">
                     <div>
                         <h5 class="font-weight-extrabold text-dark mb-1"><i class="fas fa-layer-group mr-2 text-primary"></i> Popular Courts Editor</h5>
                         <p class="text-muted text-xs mb-0">Kelola daftar lapangan populer yang direkomendasikan di landing page.</p>
@@ -199,7 +174,7 @@
 
             <!-- 5. TESTIMONIALS SECTION -->
             <div class="card border-gray-200 bg-white p-4 mb-4 shadow-sm" style="border-radius: 1.25rem !important;">
-                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center">
+                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center section-header-responsive">
                     <div>
                         <h5 class="font-weight-extrabold text-dark mb-1"><i class="fas fa-comments mr-2 text-primary"></i> Testimonials Editor</h5>
                         <p class="text-muted text-xs mb-0">Kelola ulasan, foto, dan penilaian kepuasan dari pelanggan.</p>
@@ -217,7 +192,7 @@
 
             <!-- 6. MEMBERSHIP SECTION -->
             <div class="card border-gray-200 bg-white p-4 mb-4 shadow-sm" style="border-radius: 1.25rem !important;">
-                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center">
+                <div class="card-header border-0 bg-transparent p-0 mb-4 d-flex justify-content-between align-items-center section-header-responsive">
                     <div>
                         <h5 class="font-weight-extrabold text-dark mb-1"><i class="fas fa-credit-card mr-2 text-primary"></i> Membership Plans Editor</h5>
                         <p class="text-muted text-xs mb-0">Kelola visual paket keanggotaan/membership yang dipajang untuk pelanggan.</p>
@@ -284,6 +259,7 @@
                                     <span class="d-block text-xxs text-muted mt-1">Format: JPG, PNG, WebP (Max. 2MB)</span>
                                 </div>
                             </div>
+                            <small class="form-text text-muted mt-2"><i class="fas fa-info-circle mr-1"></i> Rekomendasi ukuran: 1920x600 pixel (Landscape lebar), Max. 2MB.</small>
                         </div>
                         <div class="col-md-6 form-group mb-4">
                             <label for="cta_status" class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">CTA Status</label>
@@ -367,8 +343,18 @@
                     <hr class="my-4">
 
                     <!-- Logo/Favicon Upload -->
-                    <h6 class="font-weight-bold text-muted uppercase tracking-wider text-xxs mb-3">Identity Logo & Favicon</h6>
+                    <h6 class="font-weight-bold text-muted uppercase tracking-wider text-xxs mb-3">Website Identity & Tab Settings</h6>
                     <div class="row">
+                        <!-- Website Tab Title -->
+                        <div class="col-md-12 form-group mb-4">
+                            <label for="setting_title" class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">Website Tab Title</label>
+                            <input type="text" name="setting_title" id="setting_title" class="form-control rounded-xl text-sm" placeholder="Contoh: PadelHub - Booking Lapangan Padel Terbaik" value="{{ old('setting_title', $extras['setting_title'] ?? '') }}">
+                            <small class="form-text text-muted mt-1"><i class="fas fa-info-circle mr-1"></i> Mengubah teks judul yang muncul pada tab browser.</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Website Logo -->
                         <div class="col-md-6 form-group mb-4">
                             <label class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">Website Logo</label>
                             <div class="image-preview-upload-box rounded-2xl position-relative d-flex align-items-center justify-content-center overflow-hidden" 
@@ -392,7 +378,10 @@
                                     <span class="d-block text-xxs text-muted mt-1">Format: JPG, PNG, WebP (Max. 2MB)</span>
                                 </div>
                             </div>
+                            <small class="form-text text-muted mt-2"><i class="fas fa-info-circle mr-1"></i> Rekomendasi: 200x50px (Rasio lanskap, transparan), Max 2MB.</small>
                         </div>
+
+                        <!-- Website Favicon -->
                         <div class="col-md-6 form-group mb-4">
                             <label class="font-weight-bold text-xxs uppercase tracking-wider text-muted mb-2 d-block">Website Favicon</label>
                             <div class="image-preview-upload-box rounded-2xl position-relative d-flex align-items-center justify-content-center overflow-hidden" 
@@ -413,9 +402,10 @@
                                 <div id="favicon-placeholder" class="text-center p-3 {{ ($extras['setting_favicon'] ?? null) ? 'd-none' : '' }}">
                                     <i class="fas fa-cloud-upload-alt text-muted fa-2x mb-2"></i>
                                     <span class="d-block text-xs font-weight-bold text-dark">Klik untuk Upload Favicon</span>
-                                    <span class="d-block text-xxs text-muted mt-1">Format: ICO, PNG (Max. 1MB)</span>
+                                    <span class="d-block text-xxs text-muted mt-1">Format: ICO, PNG, JPG (Max. 1MB)</span>
                                 </div>
                             </div>
+                            <small class="form-text text-muted mt-2"><i class="fas fa-info-circle mr-1"></i> Rekomendasi: 32x32px (Rasio 1:1), Max 1MB.</small>
                         </div>
                     </div>
                     
@@ -455,9 +445,9 @@
             </div>
 
             <!-- Sticky Bottom Form Actions (Save Draft only) -->
-            <div class="sticky-bottom text-right py-3 bg-light border-top d-flex justify-content-between align-items-center mb-4" style="position: sticky; bottom: 0; z-index: 100; border-top: 1px solid #e5e7eb !important;">
-                <span class="text-xs text-muted font-weight-semibold">Simpan draf untuk melihat perubahannya secara instan pada kotak Live Preview di atas.</span>
-                <button type="submit" class="btn btn-primary px-5 py-2.5 rounded-xl font-weight-bold shadow-sm d-inline-flex align-items-center">
+            <div class="sticky-bottom text-right py-3 bg-light border-top d-flex justify-content-between align-items-center mb-4 sticky-save-bar" style="position: sticky; bottom: 0; z-index: 100; border-top: 1px solid #e5e7eb !important;">
+                <span class="text-xs text-muted font-weight-semibold d-none d-md-inline-block">Simpan draf untuk melihat perubahannya secara instan pada kotak Live Preview di atas.</span>
+                <button type="submit" class="btn btn-primary px-5 py-2.5 rounded-xl font-weight-bold shadow-sm d-inline-flex align-items-center save-draft-btn">
                     <i class="fas fa-save mr-2"></i> Save Draft
                 </button>
             </div>
@@ -482,19 +472,19 @@
                             <span class="text-xxs text-muted font-weight-medium d-block mt-2">Versi terakhir diubah pada: <strong>{{ $lastUpdated }}</strong></span>
                         </div>
                     </div>
-                    <div class="col-md-6 d-flex flex-wrap gap-2 justify-content-md-end">
+                    <div class="col-md-6 d-flex flex-wrap gap-2 justify-content-md-end publish-actions-wrapper">
                         <!-- Rollback Form -->
                         <form action="{{ route('admin.landing.rollback') }}" method="POST" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-outline-danger font-weight-bold rounded-xl px-4 py-2.5 d-inline-flex align-items-center text-xs" onclick="return confirm('Apakah Anda yakin ingin melakukan rollback ke versi live sebelumnya?')">
+                            <button type="submit" class="btn btn-outline-danger font-weight-bold rounded-xl px-4 py-2.5 d-inline-flex align-items-center text-xs rollback-btn" onclick="return confirm('Apakah Anda yakin ingin melakukan rollback ke versi live sebelumnya?')">
                                 <i class="fas fa-undo mr-1.5 text-xs"></i> Rollback Version
                             </button>
                         </form>
-
+ 
                         <!-- Publish Form -->
                         <form action="{{ route('admin.landing.publish') }}" method="POST" class="m-0">
                             @csrf
-                            <button type="submit" class="btn btn-success font-weight-bold rounded-xl px-5 py-2.5 d-inline-flex align-items-center text-xs" style="background-color: #059669 !important; border-color: #059669 !important;">
+                            <button type="submit" class="btn btn-success font-weight-bold rounded-xl px-5 py-2.5 d-inline-flex align-items-center text-xs publish-btn" style="background-color: #059669 !important; border-color: #059669 !important;">
                                 <i class="fas fa-paper-plane mr-2 text-xs"></i> Publish Landing Page
                             </button>
                         </form>
@@ -551,6 +541,57 @@
     }
     .cursor-pointer {
         cursor: pointer;
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 767.98px) {
+        .sticky-save-bar {
+            justify-content: center !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        .save-draft-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.85rem !important;
+        }
+        .publish-actions-wrapper {
+            flex-direction: column !important;
+            width: 100% !important;
+        }
+        .publish-actions-wrapper form {
+            width: 100% !important;
+        }
+        .rollback-btn, .publish-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.8rem !important;
+        }
+        .section-header-responsive {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 0.75rem !important;
+        }
+        .section-header-responsive .btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 0.4rem 0.8rem !important;
+            font-size: 0.75rem !important;
+        }
+        .row-control-btn {
+            padding: 0.25rem 0.5rem !important;
+            font-size: 0.7rem !important;
+            border-radius: 0.35rem !important;
+            line-height: 1 !important;
+            height: auto !important;
+        }
+        .header-link-btn {
+            padding: 0.35rem 0.65rem !important;
+            font-size: 0.7rem !important;
+            border-radius: 0.5rem !important;
+        }
     }
 </style>
 @endpush
@@ -678,9 +719,9 @@
                     </select>
                 </div>
                 <div class="col-md-1 text-right mt-3 mt-md-0 d-flex gap-1 justify-content-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('features', ${index}, -1)" title="Pindahkan ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('features', ${index}, 1)" title="Pindahkan ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2" onclick="removeItem('features', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('features', ${index}, -1)" title="Pindahkan ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('features', ${index}, 1)" title="Pindahkan ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2 row-control-btn" onclick="removeItem('features', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
                 </div>
             </div>
         `;
@@ -738,9 +779,9 @@
                     </div>
                 </div>
                 <div class="col-md-1 text-right mt-3 mt-md-0 d-flex gap-1 justify-content-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('popularCourts', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('popularCourts', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2" onclick="removeItem('popularCourts', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('popularCourts', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('popularCourts', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2 row-control-btn" onclick="removeItem('popularCourts', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
                 </div>
             </div>
             <div class="row mt-2">
@@ -806,9 +847,9 @@
                     </div>
                 </div>
                 <div class="col-md-3 text-right mt-3 mt-md-0 d-flex gap-1 justify-content-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('testimonials', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('testimonials', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2" onclick="removeItem('testimonials', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('testimonials', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('testimonials', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2 row-control-btn" onclick="removeItem('testimonials', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
                 </div>
             </div>
             <div class="row mt-2">
@@ -861,9 +902,9 @@
                     </select>
                 </div>
                 <div class="col-md-3 text-right mt-3 mt-md-0 d-flex gap-1 justify-content-end">
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('membership', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2" onclick="moveItem('membership', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
-                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2" onclick="removeItem('membership', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('membership', ${index}, -1)" title="Ke atas"><i class="fas fa-chevron-up text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-secondary btn-xs py-1 px-2 row-control-btn" onclick="moveItem('membership', ${index}, 1)" title="Ke bawah"><i class="fas fa-chevron-down text-xxs"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-xs py-1 px-2 row-control-btn" onclick="removeItem('membership', ${index})"><i class="fas fa-trash-alt text-xxs"></i></button>
                 </div>
             </div>
             <div class="row mt-2">

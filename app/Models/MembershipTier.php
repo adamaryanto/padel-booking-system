@@ -15,6 +15,8 @@ class MembershipTier extends Model
         'discount_percentage',
         'discount_weekday',
         'discount_weekend',
+        'discount_weekday_limit',
+        'discount_weekend_limit',
         'duration_days',
         'booking_window_days',
         'description',

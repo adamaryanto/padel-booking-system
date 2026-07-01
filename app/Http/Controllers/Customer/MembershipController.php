@@ -34,14 +34,36 @@ class MembershipController extends Controller
             ->where('status', 'pending')
             ->exists();
 
-        return view('customer.memberships.index', compact('tiers', 'landingContent', 'activeMembership', 'hasPendingMembership'));
+        $pendingMembership = Membership::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->with('payment')
+            ->latest()
+            ->first();
+
+        return view('customer.memberships.index', compact('tiers', 'landingContent', 'activeMembership', 'hasPendingMembership', 'pendingMembership'));
     }
 
     public function subscribe(MembershipTier $tier)
     {
         $user = Auth::user();
-        $membership = $this->membershipService->subscribe($user, $tier);
+        $activeMembership = $user->activeMembership();
         
+        if ($activeMembership && $activeMembership->tier) {
+            if ($tier->price <= $activeMembership->tier->price && $tier->id !== $activeMembership->membership_tier_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak dapat melakukan downgrade paket membership aktif Anda.'
+                ], 422);
+            }
+            if ($tier->id === $activeMembership->membership_tier_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda sudah berlangganan paket ini.'
+                ], 422);
+            }
+        }
+        
+        $membership = $this->membershipService->subscribe($user, $tier);
         $snapToken = $this->paymentService->getMembershipSnapToken($membership, $user);
 
         return response()->json([
@@ -60,8 +82,29 @@ class MembershipController extends Controller
             ->latest()
             ->first();
 
-        if ($pendingMembership && $pendingMembership->payment && $pendingMembership->payment->order_id) {
-            $this->paymentService->syncTransactionStatus($pendingMembership->payment->order_id);
+        if ($pendingMembership) {
+            if ($pendingMembership->payment && $pendingMembership->payment->order_id) {
+                $this->paymentService->syncTransactionStatus($pendingMembership->payment->order_id);
+            }
+            
+            $pendingMembership->refresh();
+            
+            if ($pendingMembership->status === 'active') {
+                return response()->json([
+                    'success' => true,
+                    'status' => 'active',
+                    'tier_name' => $pendingMembership->tier->name,
+                    'end_date' => $pendingMembership->end_date->format('d M Y'),
+                    'discount' => ($pendingMembership->tier->discount_weekday ?? 0) + ($pendingMembership->tier->discount_weekend ?? 0),
+                    'current_tier_id' => $pendingMembership->membership_tier_id,
+                    'receipt_url' => route('memberships.receipt', $pendingMembership)
+                ]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'status' => 'pending'
+            ]);
         }
 
         $activeMembership = $this->membershipService->getActiveMembership($user);
@@ -69,18 +112,17 @@ class MembershipController extends Controller
         if ($activeMembership) {
             return response()->json([
                 'success' => true,
-                'status' => 'active',
+                'status' => 'idle',
                 'tier_name' => $activeMembership->tier->name,
                 'end_date' => $activeMembership->end_date->format('d M Y'),
                 'discount' => ($activeMembership->tier->discount_weekday ?? 0) + ($activeMembership->tier->discount_weekend ?? 0),
                 'current_tier_id' => $activeMembership->membership_tier_id,
-                'receipt_url' => route('memberships.receipt', $activeMembership)
             ]);
         }
 
         return response()->json([
             'success' => true,
-            'status' => 'pending'
+            'status' => 'idle'
         ]);
     }
 

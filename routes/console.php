@@ -11,3 +11,4 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('app:expire-pending-payments')->everyMinute();
+Schedule::command('app:complete-past-bookings')->everyMinute();

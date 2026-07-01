@@ -14,17 +14,7 @@ class MembershipService
      */
     public function subscribe(User $user, MembershipTier $tier): Membership
     {
-        // Check if there's already a pending membership for the SAME tier
-        $existing = Membership::where('user_id', $user->id)
-            ->where('membership_tier_id', $tier->id)
-            ->where('status', 'pending')
-            ->first();
-
-        if ($existing) {
-            return $existing;
-        }
-
-        // Cancel existing pending memberships for OTHER tiers
+        // Cancel all existing pending memberships for this user
         Membership::where('user_id', $user->id)
             ->where('status', 'pending')
             ->update(['status' => 'cancelled']);

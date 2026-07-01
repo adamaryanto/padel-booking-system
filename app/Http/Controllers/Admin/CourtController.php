@@ -48,6 +48,8 @@ class CourtController extends Controller
             'location', 'court_type'
         ]);
 
+        $data['price_per_hour'] = $request->price_weekday;
+
         // Integrate Court Type into facilities
         if ($request->filled('court_type')) {
             $data['facilities'] = $request->court_type . ' Court, ' . ($request->facilities ?? '');
@@ -107,6 +109,8 @@ class CourtController extends Controller
             'remove_additional_photo_1', 'remove_additional_photo_2', 'remove_additional_photo_3',
             'location', 'court_type'
         ]);
+
+        $data['price_per_hour'] = $request->price_weekday;
 
         // Integrate Court Type into facilities
         if ($request->filled('court_type')) {

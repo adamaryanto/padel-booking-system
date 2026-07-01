@@ -80,11 +80,20 @@ class PaymentService
      */
     public function getMembershipSnapToken(Membership $membership, $user): ?string
     {
+        // Calculate upgrade price if applicable
+        $price = $membership->tier->price;
+        $activeMembership = $user->activeMembership();
+        if ($activeMembership && $activeMembership->tier) {
+            if ($membership->tier->price > $activeMembership->tier->price) {
+                $price = $membership->tier->price - $activeMembership->tier->price;
+            }
+        }
+
         $payment = Payment::firstOrCreate(
             ['membership_id' => $membership->id],
             [
                 'status' => 'pending',
-                'gross_amount' => $membership->tier->price,
+                'gross_amount' => $price,
             ]
         );
 
@@ -96,7 +105,7 @@ class PaymentService
         $params = [
             'transaction_details' => [
                 'order_id' => $orderId,
-                'gross_amount' => (int) $membership->tier->price,
+                'gross_amount' => (int) $payment->gross_amount,
             ],
             'customer_details' => [
                 'first_name' => $user->name,
@@ -105,7 +114,7 @@ class PaymentService
             'item_details' => [
                 [
                     'id' => 'MEMBERSHIP-' . $membership->id,
-                    'price' => (int) $membership->tier->price,
+                    'price' => (int) $payment->gross_amount,
                     'quantity' => 1,
                     'name' => 'Pembayaran Membership PadelHub',
                 ]

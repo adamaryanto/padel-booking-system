@@ -26,13 +26,27 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="discount_weekday">Discount Weekday (%)</label>
-                                <input type="number" name="discount_weekday" class="form-control" id="discount_weekday" value="{{ $membershipTier->discount_weekday }}" required>
+                                <input type="number" name="discount_weekday" class="form-control" id="discount_weekday" value="{{ $membershipTier->discount_weekday }}" onfocus="if(this.value=='0') this.value='';" onblur="if(this.value=='') this.value='0';" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="discount_weekend">Discount Weekend (%)</label>
-                                <input type="number" name="discount_weekend" class="form-control" id="discount_weekend" value="{{ $membershipTier->discount_weekend }}" required>
+                                <input type="number" name="discount_weekend" class="form-control" id="discount_weekend" value="{{ $membershipTier->discount_weekend }}" onfocus="if(this.value=='0') this.value='';" onblur="if(this.value=='') this.value='0';" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="discount_weekday_limit">Weekday Discount Limit (Times)</label>
+                                <input type="number" name="discount_weekday_limit" class="form-control" id="discount_weekday_limit" value="{{ $membershipTier->discount_weekday_limit }}" placeholder="Unlimited (kosongkan jika tidak terbatas)" min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="discount_weekend_limit">Weekend Discount Limit (Times)</label>
+                                <input type="number" name="discount_weekend_limit" class="form-control" id="discount_weekend_limit" value="{{ $membershipTier->discount_weekend_limit }}" placeholder="Unlimited (kosongkan jika tidak terbatas)" min="1">
                             </div>
                         </div>
                     </div>

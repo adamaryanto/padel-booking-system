@@ -70,7 +70,7 @@
     <!-- Bookings Table Card -->
     <div class="card border-gray-200 bg-white overflow-hidden shadow-none mb-4" style="border-radius: 1.5rem !important;">
         <div class="card-body p-0 table-responsive">
-            <table class="table table-hover mb-0" id="bookings-table">
+            <table class="table table-hover mb-0 d-none d-md-table" id="bookings-table">
                 <thead>
                     <tr>
                         <th>Booking ID</th>
@@ -153,8 +153,8 @@
                                         data-approve-url="{{ route('admin.bookings.approve', $booking) }}"
                                         data-complete-url="{{ route('admin.bookings.complete', $booking) }}"
                                         data-cancel-url="{{ route('admin.bookings.cancel', $booking) }}"
-                                        data-payment-verify-url="{{ $booking->payment ? route('payments.verify', $booking->payment) : '' }}"
-                                        data-payment-reject-url="{{ $booking->payment ? route('payments.reject', $booking->payment) : '' }}">
+                                        data-payment-verify-url="{{ $booking->payment ? route('admin.payments.verify', $booking->payment) : '' }}"
+                                        data-payment-reject-url="{{ $booking->payment ? route('admin.payments.reject', $booking->payment) : '' }}">
                                     View Detail
                                 </button>
                             </td>
@@ -169,10 +169,96 @@
                     @endforelse
                 </tbody>
             </table>
+
+            <!-- Bookings Mobile Card List -->
+            <div class="d-block d-md-none p-3 bg-light">
+                @forelse($bookings as $booking)
+                    <div class="booking-row card p-3 mb-3 border-gray-200 bg-white shadow-sm"
+                         data-user="{{ strtolower($booking->user->name) }}"
+                         data-date="{{ $booking->booking_date }}"
+                         data-court="{{ strtolower($booking->court->name) }}"
+                         data-status="{{ $booking->status }}"
+                         style="border-radius: 1rem !important;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="text-xs font-weight-bold text-muted uppercase">#BKG-{{ $booking->id }}</span>
+                                <h5 class="font-weight-bold text-dark text-sm mb-1 mt-0.5" style="font-size: 0.95rem;">{{ $booking->user->name }}</h5>
+                                <span class="text-muted text-xs d-block mb-1">{{ $booking->user->email }}</span>
+                            </div>
+                            <div class="d-flex flex-column align-items-end">
+                                @if($booking->status == 'pending')
+                                    <span class="badge badge-warning">Pending</span>
+                                @elseif($booking->status == 'approved' || $booking->status == 'confirmed')
+                                    <span class="badge badge-success">Confirmed</span>
+                                @elseif($booking->status == 'completed')
+                                    <span class="badge badge-info">Completed</span>
+                                @elseif($booking->status == 'cancelled')
+                                    <span class="badge badge-danger">Cancelled</span>
+                                @else
+                                    <span class="badge badge-secondary">{{ $booking->status }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="border-top border-bottom py-2 my-2 text-xs text-muted">
+                            <div class="mb-1"><i class="fas fa-table-tennis-paddle-ball mr-1.5 text-success"></i><strong>Court:</strong> {{ $booking->court->name }}</div>
+                            <div class="mb-1"><i class="far fa-calendar-alt mr-1.5"></i><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}</div>
+                            <div><i class="far fa-clock mr-1.5"></i><strong>Jadwal:</strong> {{ substr($booking->start_time, 0, 5) }} - {{ substr($booking->end_time, 0, 5) }} WIB</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div>
+                                @if($booking->payment)
+                                    @php
+                                        $badgeClass = 'badge-warning';
+                                        if ($booking->payment->status == 'verified') $badgeClass = 'badge-success';
+                                        if ($booking->payment->status == 'rejected') $badgeClass = 'badge-danger';
+                                    @endphp
+                                    <span class="badge {{ $badgeClass }}">Pay: {{ $booking->payment->status }}</span>
+                                    @if($booking->payment->proof_of_payment)
+                                        <a href="{{ asset('storage/' . $booking->payment->proof_of_payment) }}" target="_blank" class="text-xxs font-weight-bold text-primary ml-1 block mt-1">
+                                            <i class="fas fa-image mr-1"></i> Bukti Transfer
+                                        </a>
+                                    @endif
+                                @else
+                                    <span class="text-muted text-xs italic">Belum Ada Pembayaran</span>
+                                @endif
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary btn-xs view-booking-detail"
+                                        data-id="{{ $booking->id }}"
+                                        data-user-name="{{ $booking->user->name }}"
+                                        data-user-email="{{ $booking->user->email }}"
+                                        data-user-phone="{{ $booking->user->phone ?? '-' }}"
+                                        data-court-name="{{ $booking->court->name }}"
+                                        data-date="{{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}"
+                                        data-time="{{ substr($booking->start_time, 0, 5) }} - {{ substr($booking->end_time, 0, 5) }} WIB"
+                                        data-price="Rp {{ number_format($booking->total_price, 0, ',', '.') }}"
+                                        data-status="{{ $booking->status }}"
+                                        data-payment-exists="{{ $booking->payment ? '1' : '0' }}"
+                                        data-payment-status="{{ $booking->payment->status ?? '-' }}"
+                                        data-payment-amount="{{ $booking->payment ? 'Rp ' . number_format($booking->payment->gross_amount, 0, ',', '.') : '-' }}"
+                                        data-payment-type="{{ $booking->payment->payment_type ?? 'Manual Bank Transfer' }}"
+                                        data-payment-proof="{{ $booking->payment && $booking->payment->proof_of_payment ? asset('storage/' . $booking->payment->proof_of_payment) : '' }}"
+                                        data-approve-url="{{ route('admin.bookings.approve', $booking) }}"
+                                        data-complete-url="{{ route('admin.bookings.complete', $booking) }}"
+                                        data-cancel-url="{{ route('admin.bookings.cancel', $booking) }}"
+                                        data-payment-verify-url="{{ $booking->payment ? route('admin.payments.verify', $booking->payment) : '' }}"
+                                        data-payment-reject-url="{{ $booking->payment ? route('admin.payments.reject', $booking->payment) : '' }}">
+                                    View Detail
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-5 text-center text-muted">
+                        <i class="fas fa-calendar-times fa-3x mb-3 d-block opacity-25"></i>
+                        Belum ada data booking.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 
-@else
+@elseif(request('tab') == 'memberships')
     <!-- MEMBERSHIP SUBSCRIPTIONS TAB -->
     
     <!-- Filters Bar (Membership) -->
@@ -206,7 +292,7 @@
     <!-- Memberships Table Card -->
     <div class="card border-gray-200 bg-white overflow-hidden shadow-none mb-4" style="border-radius: 1.5rem !important;">
         <div class="card-body p-0 table-responsive">
-            <table class="table table-hover mb-0" id="memberships-table">
+            <table class="table table-hover mb-0 d-none d-md-table" id="memberships-table">
                 <thead>
                     <tr>
                         <th>User</th>
@@ -286,8 +372,8 @@
                                         data-payment-amount="{{ $membership->payment ? 'Rp ' . number_format($membership->payment->gross_amount, 0, ',', '.') : '-' }}"
                                         data-payment-type="{{ $membership->payment->payment_type ?? 'Manual Bank Transfer' }}"
                                         data-payment-proof="{{ $membership->payment && $membership->payment->proof_of_payment ? asset('storage/' . $membership->payment->proof_of_payment) : '' }}"
-                                        data-payment-verify-url="{{ $membership->payment ? route('payments.verify', $membership->payment) : '' }}"
-                                        data-payment-reject-url="{{ $membership->payment ? route('payments.reject', $membership->payment) : '' }}">
+                                        data-payment-verify-url="{{ $membership->payment ? route('admin.payments.verify', $membership->payment) : '' }}"
+                                        data-payment-reject-url="{{ $membership->payment ? route('admin.payments.reject', $membership->payment) : '' }}">
                                     Detail
                                 </button>
                             </td>
@@ -302,6 +388,91 @@
                     @endforelse
                 </tbody>
             </table>
+
+            <!-- Memberships Mobile Card List -->
+            <div class="d-block d-md-none p-3 bg-light">
+                @forelse($memberships as $membership)
+                    <div class="membership-row card p-3 mb-3 border-gray-200 bg-white shadow-sm"
+                         data-user="{{ strtolower($membership->user->name) }}"
+                         data-status="{{ $membership->status }}"
+                         style="border-radius: 1rem !important;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="font-weight-bold text-dark text-sm mb-1" style="font-size: 0.95rem;">{{ $membership->user->name }}</h5>
+                                <span class="text-muted text-xs d-block mb-1">{{ $membership->user->email }}</span>
+                            </div>
+                            <div>
+                                @if($membership->status == 'active')
+                                    <span class="badge badge-success">Active</span>
+                                @elseif($membership->status == 'pending')
+                                    <span class="badge badge-warning">Pending</span>
+                                @elseif($membership->status == 'expired')
+                                    <span class="badge badge-secondary">Expired</span>
+                                @elseif($membership->status == 'rejected')
+                                    <span class="badge badge-danger">Rejected</span>
+                                @else
+                                    <span class="badge badge-secondary">{{ $membership->status }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="border-top border-bottom py-2 my-2 text-xs text-muted">
+                            <div class="mb-1">
+                                <i class="fas fa-id-card mr-1.5 text-purple" style="color: #6f42c1;"></i><strong>Package:</strong> 
+                                <span class="badge bg-purple text-white px-2 py-0.5 ml-1" style="background-color: #6f42c1;">
+                                    {{ $membership->tier->name }}
+                                </span>
+                            </div>
+                            <div class="mb-1"><i class="far fa-calendar-alt mr-1.5"></i><strong>Mulai:</strong> {{ $membership->start_date ? $membership->start_date->format('d M Y') : '-' }}</div>
+                            <div><i class="far fa-calendar-times mr-1.5"></i><strong>Selesai:</strong> {{ $membership->end_date ? $membership->end_date->format('d M Y') : '-' }}</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div>
+                                @if($membership->payment)
+                                    @php
+                                        $mBadgeClass = 'badge-warning';
+                                        if ($membership->payment->status == 'verified') $mBadgeClass = 'badge-success';
+                                        if ($membership->payment->status == 'rejected') $mBadgeClass = 'badge-danger';
+                                    @endphp
+                                    <span class="badge {{ $mBadgeClass }}">Pay: {{ $membership->payment->status }}</span>
+                                    @if($membership->payment->proof_of_payment)
+                                        <a href="{{ asset('storage/' . $membership->payment->proof_of_payment) }}" target="_blank" class="text-xxs font-weight-bold text-primary ml-1 block mt-1">
+                                            <i class="fas fa-image mr-1"></i> Bukti Transfer
+                                        </a>
+                                    @endif
+                                @else
+                                    <span class="text-muted text-xs italic">Belum Ada Pembayaran</span>
+                                @endif
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-primary btn-xs view-membership-detail"
+                                        data-id="{{ $membership->id }}"
+                                        data-user-name="{{ $membership->user->name }}"
+                                        data-user-email="{{ $membership->user->email }}"
+                                        data-user-phone="{{ $membership->user->phone ?? '-' }}"
+                                        data-package-name="{{ $membership->tier->name }}"
+                                        data-package-price="Rp {{ number_format($membership->tier->price, 0, ',', '.') }}"
+                                        data-start="{{ $membership->start_date ? $membership->start_date->format('d M Y') : '-' }}"
+                                        data-end="{{ $membership->end_date ? $membership->end_date->format('d M Y') : '-' }}"
+                                        data-status="{{ $membership->status }}"
+                                        data-payment-exists="{{ $membership->payment ? '1' : '0' }}"
+                                        data-payment-status="{{ $membership->payment->status ?? '-' }}"
+                                        data-payment-amount="{{ $membership->payment ? 'Rp ' . number_format($membership->payment->gross_amount, 0, ',', '.') : '-' }}"
+                                        data-payment-type="{{ $membership->payment->payment_type ?? 'Manual Bank Transfer' }}"
+                                        data-payment-proof="{{ $membership->payment && $membership->payment->proof_of_payment ? asset('storage/' . $membership->payment->proof_of_payment) : '' }}"
+                                        data-payment-verify-url="{{ $membership->payment ? route('admin.payments.verify', $membership->payment) : '' }}"
+                                        data-payment-reject-url="{{ $membership->payment ? route('admin.payments.reject', $membership->payment) : '' }}">
+                                    Detail
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-5 text-center text-muted">
+                        <i class="fas fa-id-card fa-3x mb-3 d-block opacity-25"></i>
+                        Belum ada data subscription membership.
+                    </div>
+                @endforelse
+            </div>
         </div>
     </div>
 @endif
@@ -395,6 +566,8 @@
                                 <img src="" id="modal-payment-proof-img" class="img-thumbnail rounded w-100" style="max-height: 180px; object-fit: cover;">
                             </a>
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -412,9 +585,10 @@
                     <form id="booking-cancel-form" method="POST" action="" class="d-none">
                         @csrf
                     </form>
-                    <button type="button" class="btn btn-outline-danger text-xs py-2" id="btn-cancel-booking">
+                    <button type="button" class="btn btn-outline-danger text-xs py-2 mr-2" id="btn-cancel-booking">
                         Cancel Booking
                     </button>
+
                 </div>
 
                 <!-- Right: Approve Payment & Confirm Booking Forms -->
@@ -439,6 +613,8 @@
                     <button type="button" class="btn btn-info text-xs py-2 text-white d-none" id="btn-complete-booking" style="background-color: #3b82f6 !important; border-color: #3b82f6 !important;">
                         Complete Booking
                     </button>
+
+
                     
                     <button type="button" class="btn btn-outline-primary text-xs py-2" data-dismiss="modal">Close</button>
                 </div>
@@ -544,6 +720,8 @@
     </div>
 </div>
 
+
+
 @endsection
 
 @push('styles')
@@ -577,6 +755,38 @@
     .timeline-step .step-circle {
         position: relative;
         z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+        .modal-body .border-right {
+            border-right: 0 !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            padding-bottom: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+            padding-right: 0 !important;
+        }
+        .modal-body .pl-4 {
+            padding-left: 0 !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modal-footer {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.5rem !important;
+        }
+        .modal-footer > div {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+            width: 100% !important;
+            margin-bottom: 0.5rem !important;
+        }
+        .modal-footer .btn {
+            margin: 0 !important;
+            width: 100% !important;
+        }
     }
 </style>
 @endpush
@@ -672,6 +882,8 @@
             const paymentVerifyUrl = $(this).data('payment-verify-url');
             const paymentRejectUrl = $(this).data('payment-reject-url');
 
+
+
             // Populate text
             $('#bookingDetailModalLabel').text('Detail Booking #BKG-' + id);
             $('#modal-user-name').text(userName);
@@ -682,7 +894,7 @@
             $('#modal-booking-price').text(price);
             
             // Populate payment
-            $('#modal-payment-status').text(paymentExists === 1 ? paymentStatus : 'Belum Bayar');
+            $('#modal-payment-status').text((paymentExists == 1 || paymentExists === '1') ? paymentStatus : 'Belum Bayar');
             let payBadgeClass = 'badge-secondary';
             if (paymentStatus === 'verified') payBadgeClass = 'badge-success';
             if (paymentStatus === 'pending') payBadgeClass = 'badge-warning';
@@ -700,6 +912,8 @@
             } else {
                 $('#modal-payment-proof-container').addClass('d-none');
             }
+
+
 
             // Timeline states
             resetTimeline();
@@ -726,16 +940,16 @@
             }
             
             // 2. Reject Payment form (if payment pending)
-            if (paymentExists === 1 && paymentStatus === 'pending') {
+            if ((paymentExists == 1 || paymentExists === '1') && paymentStatus === 'pending') {
                 $('#payment-reject-form').attr('action', paymentRejectUrl);
                 $('#btn-reject-payment').removeClass('d-none');
             }
             
             // 3. Verify Payment / Approve Booking buttons
-            if (paymentExists === 1 && paymentStatus === 'pending') {
+            if ((paymentExists == 1 || paymentExists === '1') && paymentStatus === 'pending') {
                 $('#payment-verify-form').attr('action', paymentVerifyUrl);
                 $('#btn-verify-payment').removeClass('d-none');
-            } else if (status === 'pending' && paymentExists === 0) {
+            } else if (status === 'pending' && (paymentExists == 0 || paymentExists === '0')) {
                 // Booking pending and no payment, can manually confirm
                 $('#booking-approve-form').attr('action', approveUrl);
                 $('#btn-approve-booking').removeClass('d-none');
@@ -746,6 +960,8 @@
                 $('#booking-complete-form').attr('action', completeUrl);
                 $('#btn-complete-booking').removeClass('d-none');
             }
+
+
 
             $('#bookingDetailModal').modal('show');
         });
@@ -815,6 +1031,8 @@
         $('#btn-complete-booking').on('click', function() {
             $('#booking-complete-form').submit();
         });
+
+
 
 
         // --- MEMBERSHIPS DETAIL MODAL POPULATE ---
@@ -898,6 +1116,8 @@
         $('#btn-member-reject-payment').on('click', function() {
             $('#member-payment-reject-form').submit();
         });
+
+
     });
 </script>
 @endpush

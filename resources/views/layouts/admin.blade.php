@@ -37,9 +37,17 @@
             background-color: #ffffff !important;
             border-bottom: 1px solid #e5e7eb !important;
             color: #111827 !important;
-            padding: 1.25rem 1rem !important;
+            height: calc(3.5rem + 1px) !important;
+            line-height: calc(3.5rem + 1px) !important;
+            padding: 0 0.75rem !important;
             font-size: 1.1rem !important;
             font-weight: 800 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-align: center !important;
+        }
+        .brand-link .brand-icon {
+            display: inline !important;
         }
         .brand-link:hover {
             color: #111827 !important;
@@ -108,7 +116,8 @@
             -webkit-backdrop-filter: blur(8px) !important;
             border-bottom: 1px solid #e5e7eb !important;
             box-shadow: none !important;
-            padding: 0.75rem 1.5rem !important;
+            min-height: calc(3.5rem + 1px) !important;
+            padding: 0 1.5rem !important;
         }
         .main-header.navbar .nav-link {
             color: #4b5563 !important;
@@ -313,21 +322,35 @@
 
         /* Sidebar Narrower Width & Compact Spacing */
         @media (min-width: 768px) {
-            .main-sidebar, .main-sidebar .brand-link {
+            /* Base width override: AdminLTE 250px → 220px */
+            .main-sidebar {
                 width: 220px !important;
-                transition: width 0.3s ease-in-out !important;
+            }
+            .main-sidebar .brand-link {
+                width: 220px !important;
             }
             .content-wrapper, .main-header, .main-footer {
                 margin-left: 220px !important;
-                transition: margin-left 0.3s ease-in-out !important;
             }
+
+            /* Collapsed state */
             body.sidebar-collapse .main-sidebar {
                 width: 4.6rem !important;
+            }
+            body.sidebar-collapse .main-sidebar .brand-link {
+                width: 4.6rem !important;
+                text-align: center !important;
+                padding: 0 !important;
             }
             body.sidebar-collapse .content-wrapper,
             body.sidebar-collapse .main-header,
             body.sidebar-collapse .main-footer {
                 margin-left: 4.6rem !important;
+            }
+
+            /* Hide brand text completely when collapsed */
+            body.sidebar-mini.sidebar-collapse .brand-text {
+                display: none !important;
             }
         }
         
@@ -339,6 +362,20 @@
             padding: 0.75rem 0.75rem 0.25rem !important;
             margin-top: 0.75rem !important;
             margin-bottom: 0.25rem !important;
+        }
+
+        @media (max-width: 575.98px) {
+            .bell-dropdown {
+                position: static !important;
+            }
+            .bell-dropdown .dropdown-menu {
+                left: 10px !important;
+                right: 10px !important;
+                width: calc(100vw - 20px) !important;
+                min-width: 0 !important;
+                margin: 0 auto !important;
+                transform: none !important;
+            }
         }
     </style>
     
@@ -378,11 +415,70 @@
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto align-items-center">
             <!-- Notification Icon -->
-            <li class="nav-item mr-3">
-                <a class="nav-link position-relative p-1" href="#" role="button">
+            @php
+                $recentBookings = \App\Models\Booking::with(['user', 'court'])->latest()->take(5)->get()->map(function($b) {
+                    return [
+                        'type' => 'booking',
+                        'title' => 'Booking: ' . ($b->court->name ?? 'Lapangan'),
+                        'desc' => ($b->user->name ?? 'Pelanggan') . ' - Rp ' . number_format($b->total_price, 0, ',', '.'),
+                        'time' => $b->created_at,
+                        'link' => route('admin.bookings.index') . '?search=' . urlencode($b->user->name ?? ''),
+                        'status' => $b->status,
+                    ];
+                });
+
+                $recentMemberships = \App\Models\Membership::with(['user', 'tier'])->latest()->take(5)->get()->map(function($m) {
+                    return [
+                        'type' => 'membership',
+                        'title' => 'Sub: ' . ($m->tier->name ?? 'Membership'),
+                        'desc' => ($m->user->name ?? 'Pelanggan') . ' - ' . ($m->status ?? 'pending'),
+                        'time' => $m->created_at,
+                        'link' => route('admin.bookings.index') . '?tab=membership&search=' . urlencode($m->user->name ?? ''),
+                        'status' => $m->status,
+                    ];
+                });
+
+                $notifications = $recentBookings->concat($recentMemberships)->sortByDesc('time')->take(5);
+                $unreadCount = $notifications->count();
+            @endphp
+            <li class="nav-item dropdown mr-3 bell-dropdown">
+                <a class="nav-link position-relative p-1" data-toggle="dropdown" href="#" role="button">
                     <i class="far fa-bell text-muted" style="font-size: 1.2rem;"></i>
-                    <span class="badge badge-danger navbar-badge position-absolute" style="top: -2px; right: -2px; padding: 0.15rem 0.35rem !important; font-size: 0.6rem !important;">3</span>
+                    @if($unreadCount > 0)
+                        <span class="badge badge-danger navbar-badge position-absolute" style="top: -2px; right: -2px; padding: 0.15rem 0.35rem !important; font-size: 0.6rem !important;">{{ $unreadCount }}</span>
+                    @endif
                 </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right shadow-lg border-0 rounded-lg p-2" style="min-width: 290px;">
+                    <span class="dropdown-item dropdown-header font-weight-bold text-xs uppercase tracking-wider text-muted py-2 text-center d-block">Aktivitas Terbaru</span>
+                    <div class="dropdown-divider"></div>
+                    
+                    @forelse($notifications as $notif)
+                        <a href="{{ $notif['link'] }}" class="dropdown-item py-2 px-3 rounded text-sm d-block hover:bg-light mb-1">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="font-weight-bold text-dark text-xs truncate" style="max-width: 170px;">
+                                    @if($notif['type'] === 'booking')
+                                        <i class="fas fa-calendar-alt text-primary mr-1"></i>
+                                    @else
+                                        <i class="fas fa-id-card text-success mr-1"></i>
+                                    @endif
+                                    {{ $notif['title'] }}
+                                </span>
+                                <span class="text-muted text-xxs ml-2 font-weight-normal">{{ $notif['time']->diffForHumans() }}</span>
+                            </div>
+                            <span class="text-muted d-block text-xxs mt-1 truncate" style="max-width: 250px;">
+                                {{ $notif['desc'] }}
+                            </span>
+                        </a>
+                    @empty
+                        <div class="text-center py-4 text-muted text-xs">
+                            <i class="far fa-bell-slash fa-2x mb-2 d-block opacity-25"></i>
+                            Tidak ada aktivitas terbaru.
+                        </div>
+                    @endforelse
+                    
+                    <div class="dropdown-divider"></div>
+                    <a href="{{ route('admin.bookings.index') }}" class="dropdown-item dropdown-footer text-center text-xs font-weight-bold uppercase text-success py-2 d-block">Lihat Semua Booking</a>
+                </div>
             </li>
             <!-- Profile -->
             <li class="nav-item dropdown user-menu">
@@ -420,10 +516,10 @@
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-light-primary elevation-0">
+    <aside class="main-sidebar sidebar-light-primary elevation-0 sidebar-no-expand">
         <!-- Brand Logo -->
-        <a href="{{ route('admin.dashboard') }}" class="brand-link border-bottom-0 text-center">
-            <span class="brand-text">🏓 PadelHub Admin</span>
+        <a href="{{ route('admin.dashboard') }}" class="brand-link">
+            <span class="brand-icon">🏓</span><span class="brand-text"> PadelHub Admin</span>
         </a>
 
         <!-- Sidebar -->

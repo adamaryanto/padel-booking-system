@@ -19,6 +19,8 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->decimal('total_price', 10, 2);
+            $table->decimal('original_price', 10, 2)->nullable();
+            $table->decimal('discount_amount', 10, 2)->nullable();
             $table->string('status')->default('pending'); // pending, approved, cancelled
             $table->timestamps();
         });

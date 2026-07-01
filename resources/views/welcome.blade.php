@@ -25,7 +25,7 @@
     <!-- 1. HERO SECTION -->
     @if(($landingExtras['hero_status'] ?? 'active') !== 'hidden')
     @php
-        $heroBg = !empty($landingExtras['hero_bg_image']) ? url('storage/'.$landingExtras['hero_bg_image']) : ($landingContent->hero_image ? (str_starts_with($landingContent->hero_image, 'http') ? $landingContent->hero_image : url('storage/'.$landingContent->hero_image)) : asset('images/hero.png'));
+        $heroBg = !empty($landingExtras['hero_bg_image']) ? url('storage/'.$landingExtras['hero_bg_image']) : asset('images/hero.png');
     @endphp
     <header class="relative bg-cover pt-36 pb-40 md:pt-48 md:pb-52 px-4 sm:px-6 lg:px-8 overflow-hidden" 
             style="background-image: url('{{ $heroBg }}'); background-position: center 70%;">
@@ -66,14 +66,7 @@
                 </p>
             </div>
 
-            <!-- Optional illustration image centered below buttons (if set) -->
-            @if(!empty($landingExtras['hero_bg_image']) && $landingContent->hero_image)
-            <div class="mt-20 max-w-md mx-auto animate-fade-in-up" style="animation-delay: 450ms;">
-                <div class="p-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-500">
-                    <img src="{{ str_starts_with($landingContent->hero_image, 'http') ? $landingContent->hero_image : url('storage/' . $landingContent->hero_image) }}" alt="Hero Illustration" class="w-full h-auto rounded-[1.5rem] object-cover max-h-[300px]">
-                </div>
-            </div>
-            @endif
+
         </div>
     </header>
     @endif
@@ -167,13 +160,29 @@
                                 {{ $courtItem['desc'] }}
                             </p>
                             
-                            <div class="grid grid-cols-2 gap-4">
-                                <button class="bg-white/5 border border-white/10 text-white py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white/10 transition-all text-xs flex items-center justify-center gap-2">
-                                    <i class="far fa-heart"></i> Favorit
-                                </button>
-                                <a href="#availability" class="bg-neon text-dark py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white transition-all text-xs text-center" @click="courtId = ''; checked = false;">
-                                    Booking
-                                </a>
+                            <div>
+                                @php
+                                    $matchedDbCourt = null;
+                                    if (isset($courts) && $courts->isNotEmpty()) {
+                                        $matchedDbCourt = $courts->first(function($c) use ($courtItem) {
+                                            return !empty($courtItem['image']) && basename($c->photo) === basename($courtItem['image']);
+                                        });
+                                        if (!$matchedDbCourt) {
+                                            $matchedDbCourt = $courts->first(function($c) use ($courtItem) {
+                                                return stripos($c->name, $courtItem['name']) !== false || stripos($courtItem['name'], $c->name) !== false;
+                                            });
+                                        }
+                                    }
+                                @endphp
+                                @if($matchedDbCourt)
+                                    <a href="{{ route('customer.courts.show', $matchedDbCourt) }}" class="w-full block bg-neon text-dark py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white transition-all text-xs text-center">
+                                        Booking
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}" class="w-full block bg-neon text-dark py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white transition-all text-xs text-center">
+                                        Booking
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -220,11 +229,8 @@
                                     {{ $court->description }}
                                 </p>
                                 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <button class="bg-white/5 border border-white/10 text-white py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white/10 transition-all text-xs flex items-center justify-center gap-2">
-                                        <i class="far fa-heart"></i> Favorit
-                                    </button>
-                                    <a href="{{ route('customer.courts.show', $court) }}" class="bg-neon text-dark py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white transition-all text-xs text-center">
+                                <div>
+                                    <a href="{{ route('customer.courts.show', $court) }}" class="w-full block bg-neon text-dark py-4 rounded-xl font-black uppercase tracking-wider hover:bg-white transition-all text-xs text-center">
                                         Booking
                                     </a>
                                 </div>
@@ -378,20 +384,11 @@
                 <h3 class="text-5xl font-black text-white italic tracking-tighter uppercase font-heading">MEMBERSHIP <span class="text-neon">PLANS</span></h3>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-                @php
-                    $memberships = [];
-                    if (!empty($landingExtras['membership'])) {
-                        $memberships = array_filter($landingExtras['membership'], function($m) {
-                            return ($m['status'] ?? 'active') === 'active';
-                        });
-                    }
-                @endphp
-
-                @forelse($memberships as $index => $mem)
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                @forelse($membershipTiers as $index => $tier)
                     @php
-                        $isRecommended = $index === 1 || stripos($mem['name'], 'premium') !== false || stripos($mem['name'], 'rekomendasi') !== false;
-                        $memFeatures = array_filter(explode("\n", $mem['features'] ?? ''));
+                        $isRecommended = $index === 1 || stripos($tier->name, 'gold') !== false || stripos($tier->name, 'rekomendasi') !== false;
+                        $memFeatures = array_filter(explode("\n", $tier->description ?? ''));
                     @endphp
                     <div class="bg-dark p-8 rounded-3xl flex flex-col justify-between hover:border-white transition-all duration-300 relative {{ $isRecommended ? 'border border-neon shadow-[0_0_30px_rgba(190,242,100,0.15)]' : 'border border-white/5' }}">
                         @if($isRecommended)
@@ -400,12 +397,12 @@
                             </div>
                         @endif
                         <div>
-                            <h4 class="text-white font-black text-xl uppercase italic mb-2">{{ $mem['name'] }}</h4>
+                            <h4 class="text-white font-black text-xl uppercase italic mb-2">{{ $tier->name }}</h4>
                             <div class="text-neon font-black text-3xl mb-6">
-                                @if(($mem['price'] ?? 0) == 0)
+                                @if($tier->price == 0)
                                     Gratis
                                 @else
-                                    Rp {{ number_format($mem['price'], 0, ',', '.') }}<span class="text-xs text-white/40 font-medium lowercase">/{{ $mem['duration'] ?? 'Bulan' }}</span>
+                                    Rp {{ number_format($tier->price, 0, ',', '.') }}<span class="text-xs text-white/40 font-medium lowercase">/{{ $tier->duration_days }} Hari</span>
                                 @endif
                             </div>
                             <ul class="text-gray-400 text-xs font-bold uppercase tracking-wider space-y-4 mb-10">
@@ -415,10 +412,18 @@
                                         <span>{{ ltrim($featItem, '- ') }}</span>
                                     </li>
                                 @endforeach
+                                <li class="flex items-center gap-3">
+                                    <i class="fas fa-check text-neon flex-shrink-0"></i>
+                                    <span>Diskon Weekday: {{ $tier->discount_weekday }}% ({{ $tier->discount_weekday_limit ? $tier->discount_weekday_limit.'x' : 'Unlimited' }})</span>
+                                </li>
+                                <li class="flex items-center gap-3">
+                                    <i class="fas fa-check text-neon flex-shrink-0"></i>
+                                    <span>Diskon Weekend: {{ $tier->discount_weekend }}% ({{ $tier->discount_weekend_limit ? $tier->discount_weekend_limit.'x' : 'Unlimited' }})</span>
+                                </li>
                             </ul>
                         </div>
                         
-                        @if(($mem['price'] ?? 0) == 0)
+                        @if($tier->price == 0)
                             @guest
                                 <a href="{{ route('register') }}" class="block w-full text-center bg-white/5 border border-white/10 hover:bg-white/10 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition">
                                     Mulai Gratis
@@ -561,14 +566,11 @@
             <div class="col-span-2 md:col-span-1 space-y-4">
                 <a href="/" class="text-3xl font-black text-white tracking-tighter inline-block">
                     @if(!empty($landingExtras['setting_logo']))
-                        <img src="{{ url('storage/' . $landingExtras['setting_logo']) }}" alt="PadelHub Logo" style="max-height: 45px; object-fit: contain;">
+                        <img src="{{ url('storage/' . $landingExtras['setting_logo']) }}" alt="{{ $landingExtras['company_name'] ?? 'PadelHub' }} Logo" class="h-10 w-auto object-contain">
                     @else
                         PADEL<span class="text-neon">HUB</span>
                     @endif
                 </a>
-                <p class="text-gray-500 text-xs italic font-semibold leading-relaxed">
-                    Standar elit dalam manajemen lapangan padel.
-                </p>
             </div>
             
             <!-- Navigation Column -->

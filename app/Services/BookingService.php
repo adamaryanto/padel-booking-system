@@ -81,10 +81,7 @@ class BookingService
         return $slots;
     }
 
-    /**
-     * Check if a specific time range is available.
-     */
-    public function isTimeRangeAvailable(int $courtId, string $date, string $startTime, string $endTime): bool
+    public function isTimeRangeAvailable(int $courtId, string $date, string $startTime, string $endTime, ?int $excludeBookingId = null): bool
     {
         // Prevent booking in the past
         if (Carbon::parse($date)->isToday()) {
@@ -96,6 +93,9 @@ class BookingService
 
         return !Booking::where('court_id', $courtId)
             ->where('booking_date', $date)
+            ->when($excludeBookingId, function ($query) use ($excludeBookingId) {
+                $query->where('id', '!=', $excludeBookingId);
+            })
             ->where(function ($query) {
                 $query->where('status', 'approved')
                     ->orWhere(function ($q) {
@@ -116,6 +116,44 @@ class BookingService
     }
 
     /**
+     * Get the active discount percentage for a user on a given day type (weekday/weekend), checking limits.
+     */
+    public function getActiveDiscountPercentage($user, bool $isWeekend): float
+    {
+        if (!$user) {
+            return 0;
+        }
+
+        $activeMembership = $user->activeMembership();
+        if (!$activeMembership) {
+            return 0;
+        }
+
+        $tier = $activeMembership->tier;
+        $discountPercentage = $isWeekend ? ($tier->discount_weekend ?? $tier->discount_percentage) : ($tier->discount_weekday ?? $tier->discount_percentage);
+        $limit = $isWeekend ? $tier->discount_weekend_limit : $tier->discount_weekday_limit;
+
+        if ($limit !== null) {
+            $bookings = Booking::where('user_id', $user->id)
+                ->where('discount_amount', '>', 0)
+                ->whereNotIn('status', ['cancelled', 'expired'])
+                ->where('created_at', '>=', Carbon::parse($activeMembership->start_date)->startOfDay())
+                ->get();
+
+            $usedCount = $bookings->filter(function($booking) use ($isWeekend) {
+                $bDate = Carbon::parse($booking->booking_date);
+                return $isWeekend ? $bDate->isWeekend() : !$bDate->isWeekend();
+            })->count();
+
+            if ($usedCount >= $limit) {
+                return 0;
+            }
+        }
+
+        return (float) $discountPercentage;
+    }
+
+    /**
      * Calculate booking price based on court rates and user membership.
      */
     public function calculatePricing(Court $court, string $date, int $duration, $user): array
@@ -133,10 +171,9 @@ class BookingService
         $discountAmount = 0;
         $totalPrice = $originalPrice;
 
-        $activeMembership = $user->activeMembership();
+        $activeMembership = $user ? $user->activeMembership() : null;
         if ($activeMembership) {
-            $tier = $activeMembership->tier;
-            $discountPercentage = $isWeekend ? ($tier->discount_weekend ?? $tier->discount_percentage) : ($tier->discount_weekday ?? $tier->discount_percentage);
+            $discountPercentage = $this->getActiveDiscountPercentage($user, $isWeekend);
             
             $discountAmount = $originalPrice * ($discountPercentage / 100);
             $totalPrice = $originalPrice - $discountAmount;
@@ -167,5 +204,25 @@ class BookingService
             'discount_amount' => $data['discount_amount'],
             'status' => 'pending',
         ]);
+    }
+
+    /**
+     * Automatically complete past approved/confirmed bookings.
+     */
+    public function completePastBookings(): int
+    {
+        $now = now();
+        $bookings = Booking::whereIn('status', ['approved', 'confirmed'])->get();
+        $completedCount = 0;
+
+        foreach ($bookings as $booking) {
+            $endDateTime = Carbon::parse($booking->booking_date . ' ' . $booking->end_time);
+            if ($endDateTime->isPast()) {
+                $booking->update(['status' => 'completed']);
+                $completedCount++;
+            }
+        }
+
+        return $completedCount;
     }
 }

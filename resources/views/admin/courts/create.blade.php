@@ -65,24 +65,8 @@
                 </div>
                 <div class="card-body p-4">
                     <div class="row">
-                        <!-- Price Per Hour (Default placeholder/optional) -->
-                        <div class="col-md-4 mb-4">
-                            <div class="form-group mb-0">
-                                <label for="price_per_hour" class="font-weight-bold text-xs uppercase tracking-wider text-muted mb-2 d-block">Price Per Hour (Base)</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light border-right-0 border-gray-200" style="border-radius: 0.75rem 0 0 0.75rem;">Rp</span>
-                                    </div>
-                                    <input type="number" name="price_per_hour" id="price_per_hour" class="form-control rounded-xl border-left-0 @error('price_per_hour') is-invalid @enderror" placeholder="150000" value="{{ old('price_per_hour') }}">
-                                </div>
-                                @error('price_per_hour')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
                         <!-- Price Weekday -->
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group mb-0">
                                 <label for="price_weekday" class="font-weight-bold text-xs uppercase tracking-wider text-muted mb-2 d-block">Harga Weekday <span class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -98,7 +82,7 @@
                         </div>
 
                         <!-- Price Weekend -->
-                        <div class="col-md-4 mb-4">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group mb-0">
                                 <label for="price_weekend" class="font-weight-bold text-xs uppercase tracking-wider text-muted mb-2 d-block">Harga Weekend <span class="text-danger">*</span></label>
                                 <div class="input-group">

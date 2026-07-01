@@ -11,56 +11,56 @@
 <!-- Statistics Cards -->
 <div class="row">
     <!-- Card 1: Total Booking -->
-    <div class="col-lg-3 col-sm-6 mb-4">
-        <div class="card h-100 p-4 border-gray-200">
+    <div class="col-6 col-sm-6 col-lg-3 mb-4">
+        <div class="card h-100 p-4 border-gray-200 stat-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Total Booking</span>
                 <span class="badge badge-success">+12%</span>
             </div>
-            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
-                {{ $totalBookings ?: 325 }}
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1 stat-value" style="font-size: 2.25rem;">
+                {{ $totalBookings }}
             </h3>
             <p class="text-muted text-xs mb-0">dari bulan lalu</p>
         </div>
     </div>
 
     <!-- Card 2: Revenue -->
-    <div class="col-lg-3 col-sm-6 mb-4">
-        <div class="card h-100 p-4 border-gray-200">
+    <div class="col-6 col-sm-6 col-lg-3 mb-4">
+        <div class="card h-100 p-4 border-gray-200 stat-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Revenue</span>
                 <span class="badge badge-success">+18%</span>
             </div>
-            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 1.75rem; line-height: 2.25rem;">
-                Rp {{ number_format($totalRevenue ?: 12500000, 0, ',', '.') }}
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1 revenue-value" style="font-size: 1.75rem; line-height: 2.25rem;">
+                Rp {{ number_format($totalRevenue, 0, ',', '.') }}
             </h3>
             <p class="text-muted text-xs mb-0">dari bulan lalu</p>
         </div>
     </div>
 
     <!-- Card 3: Active Members -->
-    <div class="col-lg-3 col-sm-6 mb-4">
-        <div class="card h-100 p-4 border-gray-200">
+    <div class="col-6 col-sm-6 col-lg-3 mb-4">
+        <div class="card h-100 p-4 border-gray-200 stat-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Active Members</span>
                 <span class="badge badge-success">+8%</span>
             </div>
-            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
-                {{ \App\Models\Membership::where('status', 'active')->count() ?: 120 }}
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1 stat-value" style="font-size: 2.25rem;">
+                {{ \App\Models\Membership::where('status', 'active')->count() }}
             </h3>
             <p class="text-muted text-xs mb-0">dari bulan lalu</p>
         </div>
     </div>
 
     <!-- Card 4: Total Courts -->
-    <div class="col-lg-3 col-sm-6 mb-4">
-        <div class="card h-100 p-4 border-gray-200">
+    <div class="col-6 col-sm-6 col-lg-3 mb-4">
+        <div class="card h-100 p-4 border-gray-200 stat-card">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted font-weight-bold text-xs uppercase tracking-wider">Total Courts</span>
                 <span class="badge badge-info" style="background-color: rgba(16, 185, 129, 0.1) !important; color: #10b981 !important;">Active</span>
             </div>
-            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1" style="font-size: 2.25rem;">
-                {{ $totalCourts ?: 15 }}
+            <h3 class="font-weight-extrabold text-dark tracking-tight mb-1 stat-value" style="font-size: 2.25rem;">
+                {{ $totalCourts }}
             </h3>
             <p class="text-muted text-xs mb-0">2 Lapangan Baru</p>
         </div>
@@ -71,7 +71,7 @@
     <!-- Revenue Analytics Chart -->
     <div class="col-lg-8 mb-4">
         <div class="card h-100">
-            <div class="card-header d-flex justify-content-between align-items-center border-0 bg-transparent">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2 border-0 bg-transparent">
                 <h3 class="card-title font-weight-bold text-dark mb-0">Revenue Analytics</h3>
                 <!-- Filter Buttons -->
                 <div class="btn-group btn-group-sm" role="group">
@@ -132,7 +132,7 @@
                 <h3 class="card-title font-weight-bold text-dark mb-0">Recent Bookings</h3>
             </div>
             <div class="card-body table-responsive p-0">
-                <table class="table table-hover align-items-center mb-0">
+                <table class="table table-hover align-items-center mb-0 d-none d-md-table">
                     <thead>
                         <tr>
                             <th>User</th>
@@ -176,6 +176,48 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                <!-- Mobile View Card List -->
+                <div class="d-block d-md-none px-3 pt-2 pb-3">
+                    @forelse($latestBookings as $booking)
+                    <div class="p-3 mb-3 border border-gray-200 rounded-lg bg-light shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h5 class="font-weight-bold text-dark text-sm mb-1" style="font-size: 0.95rem;">{{ $booking->user->name }}</h5>
+                                <span class="text-muted text-xs font-weight-bold"><i class="fas fa-table-tennis-paddle-ball mr-1 text-success"></i>{{ $booking->court->name }}</span>
+                            </div>
+                            <div>
+                                @if($booking->status == 'pending')
+                                    <span class="badge badge-warning">Pending</span>
+                                @elseif($booking->status == 'approved' || $booking->status == 'confirmed')
+                                    <span class="badge badge-success">Confirmed</span>
+                                @elseif($booking->status == 'completed')
+                                    <span class="badge badge-info">Completed</span>
+                                @else
+                                    <span class="badge badge-danger">{{ $booking->status }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="border-top border-bottom py-2 my-2 d-flex justify-content-between text-xs text-muted">
+                            <div>
+                                <i class="far fa-calendar-alt mr-1"></i> {{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}
+                            </div>
+                            <div>
+                                <i class="far fa-clock mr-1"></i> {{ substr($booking->start_time, 0, 5) }} WIB
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ route('admin.bookings.index') }}?booking_id={{ $booking->id }}" class="btn btn-outline-primary btn-xs mr-2">Detail</a>
+                            <a href="{{ route('admin.bookings.index') }}?booking_id={{ $booking->id }}&edit=1" class="btn btn-outline-primary btn-xs">Edit</a>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="py-5 text-center text-muted">
+                        <i class="fas fa-calendar-times fa-2x mb-2 d-block opacity-25"></i>
+                        Belum ada data booking.
+                    </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>
@@ -285,4 +327,24 @@
         statusChart.render();
     });
 </script>
+@endpush
+
+@push('styles')
+<style>
+    @media (max-width: 576px) {
+        .stat-card {
+            padding: 1.25rem !important;
+        }
+        .stat-value {
+            font-size: 1.75rem !important;
+        }
+        .revenue-value {
+            font-size: 1.35rem !important;
+            line-height: 1.85rem !important;
+        }
+        .card-body {
+            padding: 1rem !important;
+        }
+    }
+</style>
 @endpush
