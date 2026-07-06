@@ -9,7 +9,7 @@ echo "<hr style='border: 1px solid #1f2937; margin: 20px 0;'>";
 echo "<strong>PHP Version:</strong> " . phpversion() . " (Laravel 11 requires >= 8.2)<br><br>";
 echo "<strong>vendor/autoload.php exists:</strong> " . (file_exists(__DIR__ . '/../vendor/autoload.php') ? "<span style='color: #10b981;'>YES</span>" : "<span style='color: #ef4444;'>NO (Vendor folder is missing or not uploaded)</span>") . "<br><br>";
 echo "<strong>storage directory writable:</strong> " . (is_writable(__DIR__ . '/../storage') ? "<span style='color: #10b981;'>YES</span>" : "<span style='color: #ef4444;'>NO (Check storage permissions)</span>") . "<br><br>";
-echo "<strong>bootstrap/cache writable:</strong> " . (is_writable(__DIR__ . '/../bootstrap/cache') ? "<span style='color: #10b981;'>YES</span>" : "<span style='color: #ef4444;'>NO (Check bootstrap/cache permissions)</span>") . "<br><br>";
+echo "<strong>bootstrap/cache directory writable:</strong> " . (is_writable(__DIR__ . '/../bootstrap/cache') ? "<span style='color: #10b981;'>YES</span>" : "<span style='color: #ef4444;'>NO (Check bootstrap/cache permissions)</span>") . "<br><br>";
 
 $envPath = __DIR__ . '/../.env';
 $envExists = file_exists($envPath);
@@ -38,7 +38,6 @@ if ($envExists) {
         if (count($parts) === 2) {
             $key = trim($parts[0]);
             $val = trim($parts[1]);
-            // Remove quotes if any
             $val = trim($val, '"\'');
             $config[$key] = $val;
         }
@@ -63,26 +62,41 @@ if ($envExists) {
             $dsn = "mysql:host=$dbHost;port=$dbPort;dbname=$dbName;charset=utf8mb4";
             $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_TIMEOUT => 5 // 5 seconds timeout
+                PDO::ATTR_TIMEOUT => 5
             ];
             $pdo = new PDO($dsn, $dbUser, $dbPass, $options);
             echo "<span style='color: #10b981; font-weight: bold;'>✔ SUCCESS: Connected to the database successfully!</span><br><br>";
             
-            // Check if tables are migrated
             $stmt = $pdo->query("SHOW TABLES");
             $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
             echo "<strong>Total Tables Migrated:</strong> " . count($tables) . "<br>";
-            if (count($tables) > 0) {
-                echo "<strong>Tables list:</strong> " . implode(', ', $tables) . "<br>";
-            } else {
-                echo "<span style='color: #yellow-400; font-weight: bold;'>⚠️ WARNING: Database connection works, but NO tables found! Please migrate database.</span><br>";
-            }
         } catch (PDOException $e) {
             echo "<span style='color: #ef4444; font-weight: bold;'>❌ CONNECTION FAILED:</span> " . htmlspecialchars($e->getMessage()) . "<br>";
         }
     }
+}
+
+echo "<hr style='border: 1px solid #1f2937; margin: 20px 0;'>";
+echo "<h3>Clearing Cached Laravel Files:</h3>";
+
+$cacheDir = __DIR__ . '/../bootstrap/cache';
+if (is_dir($cacheDir)) {
+    $files = glob($cacheDir . '/*.php');
+    if (count($files) > 0) {
+        echo "Found " . count($files) . " cached file(s) in bootstrap/cache:<br>";
+        foreach ($files as $file) {
+            $filename = basename($file);
+            if (unlink($file)) {
+                echo "<span style='color: #10b981;'>✔ Deleted: $filename (Cleared config/route cache with local paths)</span><br>";
+            } else {
+                echo "<span style='color: #ef4444;'>❌ Failed to delete: $filename</span><br>";
+            }
+        }
+    } else {
+        echo "<span style='color: #10b981;'>No cached PHP configuration files found. bootstrap/cache is already clean!</span><br>";
+    }
 } else {
-    echo "<span style='color: #ef4444;'>Cannot test database because .env file is missing.</span><br>";
+    echo "<span style='color: #ef4444;'>bootstrap/cache directory not found!</span><br>";
 }
 
 echo "</div>";
