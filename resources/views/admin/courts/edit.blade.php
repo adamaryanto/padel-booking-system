@@ -209,16 +209,14 @@
                     <div class="form-group mb-4">
                         <label for="photo" class="font-weight-bold text-xs uppercase tracking-wider text-muted mb-2 d-block">Update Foto Utama</label>
                         <div class="row align-items-center">
-                            @if($court->photo)
-                            <div class="col-md-3 mb-3 mb-md-0">
+                            <div class="col-md-3 mb-3 mb-md-0 {{ $court->photo ? '' : 'd-none' }}" id="main-photo-preview-container">
                                 <div class="bg-light rounded-xl border p-1 d-flex align-items-center justify-content-center" style="height: 100px; overflow: hidden;">
-                                    <img src="{{ asset('storage/' . $court->photo) }}" alt="{{ $court->name }}" class="img-fluid rounded" style="max-height: 100%; object-fit: cover;">
+                                    <img id="main-photo-preview" src="{{ $court->photo ? asset('storage/' . $court->photo) : '#' }}" alt="{{ $court->name }}" class="img-fluid rounded" style="max-height: 100%; object-fit: cover;">
                                 </div>
                             </div>
-                            @endif
-                            <div class="{{ $court->photo ? 'col-md-9' : 'col-md-12' }}">
+                            <div class="{{ $court->photo ? 'col-md-9' : 'col-md-12' }}" id="main-photo-input-container">
                                 <div class="custom-file">
-                                    <input type="file" name="photo" class="custom-file-input" id="photo" accept="image/*">
+                                    <input type="file" name="photo" class="custom-file-input" id="photo" accept="image/*" onchange="previewMainPhoto(this)">
                                     <label class="custom-file-label rounded-xl" for="photo">Ganti Foto Utama...</label>
                                 </div>
                             </div>
@@ -410,6 +408,23 @@
             document.getElementById('remove-additional-photo-' + slot).value = imageId;
         } else {
             document.getElementById('remove-additional-photo-' + slot).value = '1';
+        }
+    }
+
+    function previewMainPhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewImg = document.getElementById('main-photo-preview');
+                const container = document.getElementById('main-photo-preview-container');
+                const inputCol = document.getElementById('main-photo-input-container');
+
+                previewImg.src = e.target.result;
+                previewImg.classList.remove('d-none');
+                container.classList.remove('d-none');
+                inputCol.className = 'col-md-9';
+            }
+            reader.readAsDataURL(input.files[0]);
         }
     }
 </script>
