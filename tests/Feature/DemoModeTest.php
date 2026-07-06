@@ -5,7 +5,7 @@ use App\Models\Faq;
 
 test('admin CRUD is blocked when APP_DEMO_MODE is true', function () {
     // Set demo mode to true
-    putenv('APP_DEMO_MODE=true');
+    \Illuminate\Support\Env::getRepository()->set('APP_DEMO_MODE', 'true');
 
     $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
     $faq = Faq::create([
@@ -30,12 +30,12 @@ test('admin CRUD is blocked when APP_DEMO_MODE is true', function () {
     expect($faq->question)->toBe('What is Padel?');
 
     // Clean up env
-    putenv('APP_DEMO_MODE=false');
+    \Illuminate\Support\Env::getRepository()->set('APP_DEMO_MODE', 'false');
 });
 
 test('admin CRUD is allowed when APP_DEMO_MODE is false', function () {
     // Set demo mode to false
-    putenv('APP_DEMO_MODE=false');
+    \Illuminate\Support\Env::getRepository()->set('APP_DEMO_MODE', 'false');
 
     $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
     $faq = Faq::create([
@@ -58,4 +58,14 @@ test('admin CRUD is allowed when APP_DEMO_MODE is false', function () {
     // Assert FAQ was changed in the database
     $faq->refresh();
     expect($faq->question)->toBe('Updated?');
+});
+
+test('admin accessing landing page is redirected to dashboard', function () {
+    $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+    
+    // Visit homepage as admin
+    $response = $this->actingAs($admin)->get('/');
+    
+    // Assert redirect to admin dashboard
+    $response->assertRedirect(route('admin.dashboard'));
 });

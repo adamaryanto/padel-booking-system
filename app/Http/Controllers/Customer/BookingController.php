@@ -32,7 +32,7 @@ class BookingController extends Controller
     {
         $preview = request()->has('preview');
         if (Auth::check() && Auth::user()->role === \App\Models\User::ROLE_ADMIN && !$preview) {
-            abort(404);
+            return redirect()->route('admin.dashboard');
         }
 
         $courts = Court::where('is_active', true)->get();
