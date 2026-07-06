@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'nocache' => \App\Http\Middleware\PreventBackHistory::class,
+            'demo' => \App\Http\Middleware\BlockDemoModify::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

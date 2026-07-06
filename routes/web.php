@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified', 'role:customer', 'nocache'])->group(funct
     Route::post('/bookings/{booking}/reschedule', [CustomerBooking::class, 'reschedule'])->name('customer.bookings.reschedule');
 });
 
-Route::middleware(['auth', 'verified', 'role:admin', 'nocache'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin', 'nocache', 'demo'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
     Route::resource('courts', AdminCourt::class);
     Route::resource('membership-tiers', AdminMembershipTier::class);
