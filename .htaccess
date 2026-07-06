@@ -4,7 +4,7 @@
     # Prevent directory listing
     Options -Indexes
 
-    # Avoid infinite loop by ensuring we don't rewrite if already in the public folder
-    RewriteCond %{REQUEST_URI} !^/public/
+    # Only rewrite if this is the initial request (prevents infinite loop on LiteSpeed/Apache)
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
     RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
