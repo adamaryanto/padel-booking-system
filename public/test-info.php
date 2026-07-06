@@ -87,7 +87,7 @@ if (is_dir($cacheDir)) {
         foreach ($files as $file) {
             $filename = basename($file);
             if (unlink($file)) {
-                echo "<span style='color: #10b981;'>✔ Deleted: $filename (Cleared config/route cache with local paths)</span><br>";
+                echo "<span style='color: #10b981;'>✔ Deleted: $filename</span><br>";
             } else {
                 echo "<span style='color: #ef4444;'>❌ Failed to delete: $filename</span><br>";
             }
@@ -95,8 +95,33 @@ if (is_dir($cacheDir)) {
     } else {
         echo "<span style='color: #10b981;'>No cached PHP configuration files found. bootstrap/cache is already clean!</span><br>";
     }
-} else {
-    echo "<span style='color: #ef4444;'>bootstrap/cache directory not found!</span><br>";
 }
+
+echo "<hr style='border: 1px solid #1f2937; margin: 20px 0;'>";
+echo "<h3>Read Server Error Logs (Last 15 lines):</h3>";
+
+function printTail($filepath, $name) {
+    if (file_exists($filepath)) {
+        echo "<strong>Found $name ($filepath):</strong><br>";
+        $lines = file($filepath);
+        $lastLines = array_slice($lines, -15);
+        echo "<pre style='background: #1f2937; padding: 15px; border-radius: 8px; border: 1px solid #374151; overflow-x: auto; font-size: 12px; color: #f3f4f6;'>";
+        foreach ($lastLines as $line) {
+            echo htmlspecialchars($line);
+        }
+        echo "</pre><br>";
+    } else {
+        echo "No $name file found at $filepath<br>";
+    }
+}
+
+// 1. Check php error_log in public folder
+printTail(__DIR__ . '/error_log', 'Public error_log');
+
+// 2. Check php error_log in root folder
+printTail(__DIR__ . '/../error_log', 'Root error_log');
+
+// 3. Check laravel log
+printTail(__DIR__ . '/../storage/logs/laravel.log', 'Laravel log');
 
 echo "</div>";
