@@ -1,6 +1,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # Forward all requests to the public directory transparently
-    RewriteRule ^$ public/ [L]
-    RewriteRule (.*) public/$1 [L]
+    
+    # Prevent directory listing
+    Options -Indexes
+
+    # Avoid infinite loop by ensuring we don't rewrite if already in the public folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
